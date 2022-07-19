@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>User input</title>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="text-center" style="padding: 30px">USER INPUT</h1>
+    {% for input_field in input_fields %}
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="inputGroup-sizing-default">{{ input_field.variable }}</span>
+      <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="input_{{variable}}">
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success btn-lg">Вернуться к коду</button>
+</div>
+{% endblock %}

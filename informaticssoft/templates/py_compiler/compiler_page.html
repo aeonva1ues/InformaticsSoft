@@ -4,21 +4,24 @@
 {% endblock %}
 {% block content %}
 <div class="container" style="padding: 60px">
-<div class="visually-hidden alert alert-danger" role="alert">
-  Ошибка!
+{% if with_error %}
+<div class="alert alert-danger" role="alert">
+  Ошибка: {{ code_result }}
 </div>
-<div class="visually-hidden alert alert-success" role="alert">
-  Результат работы кода:
+{% elif with_error == False %}
+<div class="alert alert-success" role="alert">
+  Результат работы кода: {{ code_result }}
 </div>
+{% endif %}
 <form method="post">
 {% csrf_token %}
 <div class="mb-3">
-    <label for="exampleFormControlTextarea1" class="form-label fs-1 text-white">Code editor</label>
-    <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap;" id="exampleFormControlTextarea1" rows="16" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
+    <label for="code-editor" class="form-label fs-1 text-white">CODE EDITOR</label>
+    <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap;" id="code-editor" rows="16" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
   onkeypress=if(event.keyCode==9)return!1></textarea>
 </div>
 <div class="d-grid" style="padding-bottom: 60px">
-  <button class="btn btn-success" type="submit">Проверить код</button>
+  <button class="btn btn-success" type="submit" id="check-btn">Проверить код</button>
 </div>
 </form>
     <!-- Кнопка-триггер модального окна -->
@@ -49,5 +52,54 @@
     </div>
   </div>
 </div>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">
+  Ограничения данного компилятора
+</button>
+<!-- Модальное окно -->
+<div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel2" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel2">Ограничения</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body text-black">
+    <p>
+    <h5>Данный компилятор создан для практики базовых знаний о языке программирования. В связи с этим вы можете использовать лишь несколько стандартных Python-библиотек: Math, Random, Datetime.</h5>
+        <br>
+        <h5>Однако для практики подобных модулей будет достаточно. Разберитесь сначала с ними.</h5>
+        <br>
+    <h5>Если вы планируете связать своё будущее с изучением программирования и думаете, что подобные задачи - бессмысленная трата времени, то вы очень сильно ошибаетесь</h5>
+        <br>
+    <h5>Базовые знания языка программирования требуются для устройства на любую позицию программиста в IT. Пусть вы умеете хорошо работать с веб-фреймворком, но плохо знаете базовые возможности языка, то тогда ваши шансы на получение должности значительно снижаются.</h5>
+    <br>
+        <h5>Хотите порешать дополнительные задания? Откройте вкладку Примеры</h5>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Понял</button>
+      </div>
+    </div>
+  </div>
 </div>
+</div>
+
+</div>
+{% if last_code %}
+<script>
+  'use strict';
+  function replaceAll(string, search, replace) {
+    return string.split(search).join(replace);
+  }
+  const code_edit_field = document.getElementById('code-editor');
+  let code = `{{ last_code }}`;
+  code = replaceAll(code, "&#x27;", "'");
+  code = replaceAll(code, "&gt;", ">");
+  code = replaceAll(code, '&quot;', '"');
+  code = replaceAll(code, '&amp;', '&');
+  code = replaceAll(code, '&lt;', '<');
+  code_edit_field.value = code;
+</script>
+{% endif %}
+
 {% endblock %}
