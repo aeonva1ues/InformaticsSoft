@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>Compiler</title>
+{% endblock %}
+{% block content %}
+<div class="container" style="padding: 60px">
+<div class="visually-hidden alert alert-danger" role="alert">
+  Ошибка!
+</div>
+<div class="visually-hidden alert alert-success" role="alert">
+  Результат работы кода:
+</div>
+<form method="post">
+{% csrf_token %}
+<div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label fs-1 text-white">Code editor</label>
+    <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap;" id="exampleFormControlTextarea1" rows="16" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
+  onkeypress=if(event.keyCode==9)return!1></textarea>
+</div>
+<div class="d-grid" style="padding-bottom: 60px">
+  <button class="btn btn-success" type="submit">Проверить код</button>
+</div>
+</form>
+    <!-- Кнопка-триггер модального окна -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+  Что такое компилятор?
+</button>
+<!-- Модальное окно -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Что такое компилятор?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body text-black">
+    <p>
+    <h5>
+        Компилятор - инструмент, превращающий код, написанный на понятном человеку языке программирования, в код, понятный машине.
+    </h5>
+    <br>
+    <h5>Прежде чем приступать к написанию кода, предлагаю ознакомиться с вкладками: Справочник, Примеры.</h5>
+    <h5>По любым вопросам вы можете обратиться в личные сообщения (ссылка в футере страницы или во вкладке Обратная связь).</h5>
+    </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Понял</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
