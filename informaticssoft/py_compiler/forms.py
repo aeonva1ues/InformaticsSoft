@@ -6,5 +6,4 @@ class CheckCode(forms.Form):
 
 
 class TypeUserInput(forms.Form):
-    pass
-
+    template_name = 'py_compiler/input_fields.html'

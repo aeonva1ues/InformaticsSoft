@@ -1,0 +1,42 @@
+{% extends 'performancetech/base.html' %}
+{% load static %}
+{% block title %}
+<title>PerformanceTech</title>
+{% endblock %}
+
+{% block content %}
+<div class="text-center" style="padding-top: 60px; padding-bottom: 200px">
+    <p>
+        <strong class="display-1">PerformanceTech</strong>
+        <br>
+        <small class="display-6" style="margin-left: 300px">&mdash; Удобства для звукооператора</small>
+    </p>
+    <hr>
+</div>
+<h1 class="display-4">Как пользоваться?</h1>
+<p class="fs-4" style="padding-top: 30px">
+    Пользователю предоставлен весь необходимый функционал для удобного хранения и передачи файлов при подготовке к мероприятиям.
+    <br>
+    На данной странице вы можете найти хранилище файлов. Вы можете быстро <a href="#">перейти к нему</a>. При необходимости загрузить
+    свои файлы в хранилище перейдите в раздел <strong>"Загрузить"</strong>.
+    <br>Раздел <strong>"Заметки"</strong> предназначен для логирования и хранения рядом с звукооператором любой информации, которая может ему пригодиться.
+    В этом разделе можно хранить сценарии, оставлять отчёты о проведенных мероприятиях, оставлять памятные заметки и многое другое.
+    <br>В разделе <strong>"История"</strong> вы можете ознакомиться с датами загрузки файлов и создания заметок пользователями.
+</p>
+<h1 class="display-4" style="padding-top: 60px">Фоны</h1>
+<div class="row">
+    <div class="col-4">
+        <figure class="figure" style="display: block; height: 30px">
+        <img src="https://avatars.mds.yandex.net/get-kinopoisk-image/1900788/1304fbf0-9677-46ef-954c-9b1e01cbbc2c/orig" class="figure-img img-fluid rounded" alt="...">
+        <figcaption class="figure-caption">Подпись к изображению.</figcaption>
+        </figure>
+    </div>
+    <div class="col-4">
+        <figure class="figure">
+        <img src="https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/c24b2de5-9f9b-4d02-b611-a6d64fe2c4e0/orig" class="figure-img img-fluid rounded" alt="...">
+        <figcaption class="figure-caption">Подпись к изображению.</figcaption>
+        </figure>
+    </div>
+</div>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+{% endblock %}

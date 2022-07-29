@@ -4,13 +4,16 @@
 {% endblock %}
 {% block content %}
 <div class="container">
+    <form method="post">
+    {% csrf_token %}
     <h1 class="text-center" style="padding: 30px">USER INPUT</h1>
     {% for input_field in input_fields %}
     <div class="input-group mb-3">
       <span class="input-group-text" id="inputGroup-sizing-default">{{ input_field.variable }}</span>
-      <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" name="input_{{variable}}">
+      <input type="text" class="form-control" aria-label="Sizing example input" placeholder="{{input_field.comment}}" aria-describedby="inputGroup-sizing-default" name="input_{{input_field.index}}">
     </div>
     {% endfor %}
-    <button type="submit" class="btn btn-success btn-lg">Вернуться к коду</button>
+    <button type="submit" class="btn btn-success btn-lg">Подтвердить</button>
+    </form>
 </div>
 {% endblock %}
