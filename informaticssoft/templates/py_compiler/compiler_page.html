@@ -4,6 +4,10 @@
 {% endblock %}
 {% block content %}
 <div class="container" style="padding: 60px">
+<div class="d-flex align-items-center visually-hidden" id="loading-label">
+  <strong>Проверка кода...</strong>
+  <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+</div>
 {% if with_error %}
 <div class="alert alert-danger" role="alert">
   Ошибка: {{ code_result }}
@@ -76,7 +80,10 @@
         <h5>Хотите порешать дополнительные задания? Откройте вкладку Примеры</h5>
         <br><br>
         <h3 style="color:#c00937">Цикл While</h3>
-        <h5>Временно недоступен.</h5>
+        <h5 class="text-decoration-line-through">Временно недоступен.</h5>
+        <br>
+        <h5>Цикл while доступен для вашего использования в данном компиляторе. Ограничение накладывается лишь на использование бесконечного цикла.
+        </h5>
         </p>
       </div>
       <div class="modal-footer">
@@ -105,8 +112,8 @@
         После заполнения формы нажмите кнопку "Продолжить", тогда вы вернетесь в код, в который автоматически подставятся указанные вами значения. Около значений будут соответствующие комментарии<br>
         К сожалению, а может быть и к счастью, в предложенном компиляторе это реализовано именно так. Однако, вы можете наглядно увидеть
           как работает функция input.
-          <br><br>
-
+          <br>
+        
 
 
         </h5>
@@ -123,6 +130,12 @@
 {% if last_code %}
 <script>
   'use strict';
+  function show_object(obj) {
+    obj.classList.remove('visually-hidden');
+  };
+  function hide_object(obj) {
+    obj.classList.add('visually-hidden');
+  };
   function replaceAll(string, search, replace) {
     return string.split(search).join(replace);
   }
@@ -134,6 +147,15 @@
   code = replaceAll(code, '&amp;', '&');
   code = replaceAll(code, '&lt;', '<');
   code_edit_field.value = code;
+
+
+  const check_btn = document.getElementById('check-btn');
+  const loading_label = document.getElementById('loading-label');
+  check_btn.onclick = function() {
+    console.log('+');
+    show_object(loading_label);
+  };
+    
 </script>
 {% endif %}
 
