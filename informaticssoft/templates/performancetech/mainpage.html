@@ -1,11 +1,10 @@
 {% extends 'performancetech/base.html' %}
-{% load static %}
 {% block title %}
 <title>PerformanceTech</title>
 {% endblock %}
 
 {% block content %}
-<div class="text-center" style="padding-top: 60px; padding-bottom: 200px">
+<div class="text-center" style="padding-top: 60px; padding-bottom: 130px">
     <p>
         <strong class="display-1">PerformanceTech</strong>
         <br>
@@ -17,26 +16,203 @@
 <p class="fs-4" style="padding-top: 30px">
     Пользователю предоставлен весь необходимый функционал для удобного хранения и передачи файлов при подготовке к мероприятиям.
     <br>
-    На данной странице вы можете найти хранилище файлов. Вы можете быстро <a href="#">перейти к нему</a>. При необходимости загрузить
-    свои файлы в хранилище перейдите в раздел <strong>"Загрузить"</strong>.
-    <br>Раздел <strong>"Заметки"</strong> предназначен для логирования и хранения рядом с звукооператором любой информации, которая может ему пригодиться.
+    На данной странице вы можете найти хранилище файлов. Вы можете быстро <a href="#backgrounds">перейти к нему</a>. При необходимости загрузить
+    свои файлы в хранилище перейдите в раздел <a href="load">"Загрузить"</a>.
+    <br>Если вам необходимо быстро подготовиться к <strong>выступлению</strong>, то в разделе <a href="create">"Создать"</a> вы можете собрать HTML-страницу или презентацию
+    для удобного показа фонов и запуска музыки.
+    <br>Раздел <a href="notes">"Заметки"</a> предназначен для логирования и хранения рядом с звукооператором любой информации, которая может ему пригодиться.
     В этом разделе можно хранить сценарии, оставлять отчёты о проведенных мероприятиях, оставлять памятные заметки и многое другое.
-    <br>В разделе <strong>"История"</strong> вы можете ознакомиться с датами загрузки файлов и создания заметок пользователями.
+    <br>В разделе <a href='history'>"История"</a> вы можете ознакомиться с датами загрузки файлов и создания заметок пользователями.
 </p>
-<h1 class="display-4" style="padding-top: 60px">Фоны</h1>
+<h1 class="display-4" style="padding-top: 60px" id="backgrounds">Фоны</h1>
+<hr>
+<h3 style="padding-bottom: 60px">Для сохранения нажмите на картинку</h3>
+{% if oneColor_images %}
+<h5>Однотонные</h5>
 <div class="row">
-    <div class="col-4">
-        <figure class="figure" style="display: block; height: 30px">
-        <img src="https://avatars.mds.yandex.net/get-kinopoisk-image/1900788/1304fbf0-9677-46ef-954c-9b1e01cbbc2c/orig" class="figure-img img-fluid rounded" alt="...">
-        <figcaption class="figure-caption">Подпись к изображению.</figcaption>
+    {% for oneColor_image in oneColor_images %}
+    <div class="col-4 context-area-default-{{oneColor_image.image_id}}" onclick="window.open('http://127.0.0.1:8000/static/images/oneColor/{{oneColor_image.name}}')">
+        <figure class="figure border border-secondary" style="display: block; border-radius: 6px;">
+        <img src='{{oneColor_image.path}}' class="figure-img img-fluid rounded" alt="{{ oneColor_image.name }}">
+        <figcaption class="figure-caption text-center">{{ oneColor_image.name }}</figcaption>
         </figure>
     </div>
-    <div class="col-4">
-        <figure class="figure">
-        <img src="https://avatars.mds.yandex.net/get-kinopoisk-image/1773646/c24b2de5-9f9b-4d02-b611-a6d64fe2c4e0/orig" class="figure-img img-fluid rounded" alt="...">
-        <figcaption class="figure-caption">Подпись к изображению.</figcaption>
-        </figure>
-    </div>
+    {% endfor %}
 </div>
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+{% endif %}
+{% if loaded_sections %}
+<h5 style="padding-top: 30px; cursor: pointer" onclick="window.location = 'load'">Загруженные</h5>
+{% for loaded_section in loaded_sections %}
+{% if loaded_section.images|length > 0 %}
+<h5 style="padding-top: 30px"><strong>{{loaded_section.name}} ({{loaded_section.files_count}})</strong></h5>
+<div class="row border border-secondary" style="padding-top: 14px">
+    {% for image in loaded_section.images %}
+    <div class="col-4 context-area-loadedimg-{{image.image_id}}" onclick="window.open('http://127.0.0.1:8000/static/images/loaded/{{loaded_section.name}}/{{image.name}}')">
+        <figure class="figure border border-secondary" style="display: block; border-radius: 6px;">
+        <img src='{{image.path}}' class="figure-img img-fluid rounded" alt="{{ image.name }}">
+        <figcaption class="figure-caption text-center">{{ image.name }}</figcaption>
+        </figure>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if loaded_audio_sections %}
+<h1 class="display-4" style="padding-top: 100px" id="backgrounds">Аудио</h1>
+<hr>
+<h5 style="cursor: pointer" onclick="window.location = 'load'">Загруженное</h5>
+{% for loaded_audio_section in loaded_audio_sections %}
+{% if loaded_audio_section.audio|length > 0 %}
+<h5 style="padding-top: 30px"><strong>{{loaded_audio_section.name}} ({{loaded_audio_section.files_count}})</strong></h5>   
+    <div class="row border border-secondary">
+    {% for audio in loaded_audio_section.audio %}
+    <div class="col-3 context-area-loadedaudio-{{audio.audio_id}}" style="padding-top: 20px">
+        <p>{{audio.name}}</p>
+        <audio controls preload src="{{audio.path}}">Браузер не поддерживает проигрывание аудио.</audio>
+    </div>
+    {% endfor %}
+    </div>
+{% endif %}    
+
+{% endfor %}
+{% endif %}
+<ul class="menu-1 right-click-menu bg-white text-black border border-black">
+    <li id="d-l1">Загружен: Автоматически</li>
+</ul>
+<ul class="menu-2 right-click-menu bg-white text-black border border-black">
+    <li id="li-l1">Загружен</li>
+    <li id="li-l2">Удалить</li>
+</ul>
+<ul class="menu-3 right-click-menu bg-white text-black border border-black">
+    <li id="la-l1">Загружен</li>
+    <li id="la-l2">Удалить</li>
+</ul>
+{% csrf_token %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    'use strict';
+    function ajaxPost(url_name, data, success_action) {
+        if(url_name==='file-info') {var url="{% url 'file-info' %}"}
+        else if(url_name==='delete-file') {var url="{% url 'delete-file' %}"};
+        $.ajax({
+                  url: url,
+                  type: 'post',
+                  data: data,
+                  // если успешно, то
+                  success: function(response) {success_action(response)},
+                  // если ошибка, то
+                  error: function() {
+                      // предупредим об ошибке
+                      console.log('Ошибка ajax запроса');
+                  }
+                });
+    };
+    const menuAreas = document.querySelectorAll("[class*=context-area-]");
+    const all_displays = document.querySelectorAll("[class*=menu-]");
+    var menu = all_displays[0];
+    const first_btn_default = document.getElementById('d-l1');
+
+
+    var csrf_token = $("input[name=csrfmiddlewaretoken]").val();
+    var file_info = '';
+    var img_id = -1  // значение по умолчанию
+    var audio_id = -1
+
+    const first_btn_loadimg = document.getElementById('li-l1');
+    const second_btn_loadimg = document.getElementById('li-l2');
+
+
+    const first_btn_loadaudio = document.getElementById('la-l1');
+    const second_btn_loadaudio = document.getElementById('la-l2');
+    menuAreas.forEach(function(menuArea) {
+        menuArea.addEventListener( "contextmenu", event => {
+            event.preventDefault();
+            if(menuArea.classList[1].split('-')[2] === 'default') {
+                menu = all_displays[0]
+                menu.style.top = `${event.clientY}px`;
+                menu.style.left = `${event.clientX}px`;
+                menu.classList.add("active");
+            }
+            else if(menuArea.classList[1].split('-')[2] === 'loadedimg') {
+                menu = all_displays[1]
+                img_id = menuArea.classList[1].split('-')[3]
+                menu.style.top = `${event.clientY}px`;
+                menu.style.left = `${event.clientX}px`;
+                menu.classList.add("active");
+                let url_name = 'file-info';
+                let data = {
+                    type: 'images',
+                    id: img_id,
+                    csrfmiddlewaretoken: csrf_token
+                };
+                ajaxPost(url_name,data,(response)=>{
+                      file_info = response;
+                      let load_date = file_info['load_date'];
+                      let load_time = file_info['load_time'];
+                      first_btn_loadimg.innerHTML = `Загружен: ${load_date} в ${load_time}`;
+                  });
+            }
+            else if(menuArea.classList[1].split('-')[2] === 'loadedaudio'){
+                menu = all_displays[2]
+                audio_id = menuArea.classList[1].split('-')[3]
+                menu.style.top = `${event.clientY}px`;
+                menu.style.left = `${event.clientX}px`;
+                menu.style.zIndex = 100000;
+                menu.classList.add("active");
+                let url_name = 'file-info';
+                let data = {
+                    type: 'audio',
+                    id: audio_id,
+                    csrfmiddlewaretoken: csrf_token
+                };
+                ajaxPost(url_name,data,(response)=>{
+                      file_info = response;
+                      let load_date = file_info['load_date'];
+                      let load_time = file_info['load_time'];
+                      first_btn_loadaudio.innerHTML = `Загружено: ${load_date} в ${load_time}`;
+                  });
+            };
+        }, false)
+    });
+    document.addEventListener("click", event => {
+        if (event.button !== 2) {
+            menu.classList.remove("active");
+        }
+    }, false);
+    
+
+    document.querySelector("#li-l1").addEventListener("click", () => {
+        alert(`Путь к файлу: ${file_info['path']}`);
+    }, false);
+    document.querySelector("#li-l2").addEventListener("click", () => {
+        // Удаление фото
+        let url = 'delete-file';
+        let data = {
+            id: img_id,
+            path: file_info['path'],
+            csrfmiddlewaretoken: csrf_token
+        };
+        ajaxPost(url,data,(response)=>{location.reload()});
+    }, false);
+
+
+
+    document.querySelector("#la-l1").addEventListener("click", () => {
+        alert(`Путь к файлу: ${file_info['path']}`);
+    }, false);
+
+    document.querySelector("#la-l2").addEventListener("click", () => {
+        // Удаление аудио
+        let url = 'delete-file';
+        let data = {
+            id: audio_id,
+            path: file_info['path'],
+            csrfmiddlewaretoken: csrf_token
+        };
+        ajaxPost(url,data,(response)=>{location.reload()});
+    }, false);
+
+
+</script>
 {% endblock %}

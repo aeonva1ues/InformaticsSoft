@@ -1,0 +1,39 @@
+{% extends 'performancetech/base.html' %}
+{% block title %}
+<title>Загрузить файл</title>
+{% endblock %}
+{% block content %}
+<h1 class="display-3 text-center">Загрузить файл</h1>
+{% if with_error %}
+{% if with_error == 'None' %}
+<div class="alert alert-success" role="alert">
+  Файл успешно сохранен
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+  {{ with_error }}
+</div>
+{% endif %}
+{% endif %}
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+    <div class="mb-3">
+        <label for="sectionName" class="form-label">Имя раздела (НЕ ВИДЕО/ФОТО/АУДИО)</label>
+        <input class="form-control" list="datalistOptions" id="sectionName" name="sectionName" placeholder="Укажите имя раздела">
+        <datalist id="datalistOptions">
+        {% if sections %}    
+        {% for section in sections %}    
+        <option value="{{section}}"></option>
+        {% endfor %}
+        {% endif %}
+        </datalist>
+        </div>
+    <div class="mb-3">
+        <label for="formFile" class="form-label">Выберите файл</label>
+        <input class="form-control" type="file" id="formFile" name="fileName">
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-success btn-lg">Загрузить</button>
+    </div>
+</form>
+    {% endblock %}

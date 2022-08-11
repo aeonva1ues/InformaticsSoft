@@ -64,9 +64,6 @@ def py_compiler_view(request):
             danger_using_files = False
             # Тяжелые функции, не выполняющиеся через exec()
             heavy_functions = False
-            # Бесконечный цикл
-            # infinity_loop = False
-            # input() строки в коде
             lines_with_input = []
             line_counter = 0
             for code_line in code_lines:
@@ -83,8 +80,6 @@ def py_compiler_view(request):
                     danger_using_files = True
                 if 'help()' in code_line:
                     heavy_functions = True
-                # if 'while' in code_line:
-                #     infinity_loop = True
                 if 'input(' in code_line and '# введено пользователем через input()' not in code_line and \
                         '# Вы не указали, куда сохранять данные, введенные через input()' not in code_line:
                     lines_with_input.append(
@@ -117,25 +112,6 @@ def py_compiler_view(request):
                             thr.stop()
                             break
                     time.sleep(1)
-                # with concurrent.futures.ThreadPoolExecutor() as executor:
-                #     future = executor.submit(run_code, code)
-                #     return_value = future.result()
-                #     result = return_value[0]
-                #     with_error = return_value[1]                
-                # print('+')
-                # with_error = False
-                # codeOut = io.StringIO()
-                # sys.stdout = codeOut
-                # try:
-                #     exec(code)
-                #     sys.stdout = sys.__stdout__
-                #     sys.stderr = sys.__stderr__
-                #     result = codeOut.getvalue()
-                # except Exception as code_error:
-                #     with_error = True
-                #     result = code_error
-                # finally:
-                #     codeOut.close()
             else:
                 with_error = True
                 result = ''
@@ -145,10 +121,7 @@ def py_compiler_view(request):
                     result = result + 'Похоже, вы пытались взаимодействовать с файлами!\n'
                 if heavy_functions:
                     result = result + 'Вы использовали функцию, внесенную в список исключений!\n'
-                # if infinity_loop:
-                #     result = result + 'Использование цикла while в данном компиляторе запрещено. ' \
-                #                       'Практика по данному циклу в разделе "Примеры"'
-
+                
             context = {
                 'last_code': code,
                 'with_error': with_error,

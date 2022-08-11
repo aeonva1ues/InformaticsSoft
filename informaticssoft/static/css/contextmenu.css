@@ -1,0 +1,25 @@
+.context-area {}
+.right-click-menu {
+    margin: 0;
+    padding: 0;
+    position: fixed;
+    list-style: none;
+    border: 2px solid #ffffff;
+    border-radius: 2px;
+    display: none;
+    width: auto
+}
+.right-click-menu.active {
+    display: block;
+}
+.right-click-menu li {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 20px;
+
+}
+.right-click-menu li:hover {
+    background: #bdbbbb;
+}
