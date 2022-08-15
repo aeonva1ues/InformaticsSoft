@@ -10,11 +10,20 @@
 </div>
 {% if with_error %}
 <div class="alert alert-danger" role="alert">
-  Ошибка: {{ code_result }}
+  <p>
+    Ошибка: <br>
+    {{ code_result}}
+  </p>
 </div>
 {% elif with_error == False %}
 <div class="alert alert-success" role="alert">
-  Результат работы кода: {{ code_result }}
+  <p>
+    Результат работы кода: <br> 
+    {% for code_line in code_result %}
+      {{ code_line }}
+      <br>
+    {% endfor %}
+  </p>
 </div>
 {% endif %}
 <form method="post">
@@ -24,9 +33,30 @@
     <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap;" id="code-editor" rows="16" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
   onkeypress=if(event.keyCode==9)return!1></textarea>
 </div>
-<div class="d-grid" style="padding-bottom: 60px">
+<div class="d-grid" style="padding-bottom: 12px">
   <button class="btn btn-success" type="submit" id="check-btn">Проверить код</button>
 </div>
+{% if last_code and finish_variables %}
+<div class="d-grid" style="padding-bottom: 60px">
+  <button class="btn btn-warning" type="button" id="analiz-btn" data-bs-toggle="offcanvas" data-bs-target="#analizCanvas" aria-controls="analizCanvas">Анализ кода</button>
+</div>
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="analizCanvas" aria-labelledby="analizCanvas">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="analizCanvasLabel">Анализ кода</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+  </div>
+  <div class="offcanvas-body">
+    <p>
+      <h3>Конечные значения переменных:</h3>
+      <br>
+      {% for finish_variable in finish_variables %}
+      <h3><code>({{ finish_variable.format }}) {{ finish_variable.variable }}</code> = <code>{{finish_variable.value}}</code></h3>
+      <br>
+      {% endfor %}
+    </p>
+  </div>
+</div>
+{% endif %}
 </form>
     <!-- Кнопка-триггер модального окна -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">

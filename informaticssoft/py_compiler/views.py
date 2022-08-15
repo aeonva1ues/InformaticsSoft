@@ -28,21 +28,30 @@ class StoppableThread(threading.Thread):
         return self._stop_event.is_set()
 
 
-def run_code(code):
-    with_error = False
-    codeOut = io.StringIO()
-    sys.stdout = codeOut
+def run_code(__code):
+    __with_error = False
+    __codeOut = io.StringIO()
+    sys.stdout = __codeOut
     try:
-        exec(code)
+        exec(f'''{__code}
+        \n__ALLVARIABLES_STR = ''
+        \n__ALLVARIABLES_U = dir()
+        \nfor variable in __ALLVARIABLES_U:
+        \n\tif variable == '__code' or variable == '__codeOut' or variable == '__with_error' or variable == '__ALLVARIABLES_STR':
+        \n\t\tpass
+        \n\telse:
+        \n\t\t__ALLVARIABLES_STR = __ALLVARIABLES_STR + variable + '=' + str(type(locals()[variable])).lstrip("<class '").rstrip("'>") + '=' + str(locals()[variable]) + 'SEPSEPsepSeP'
+        \nprint(__ALLVARIABLES_STR)
+        ''')
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-        result = codeOut.getvalue()
+        result = __codeOut.getvalue()
     except Exception as code_error:
         with_error = True
         result = code_error
     finally:
-        codeOut.close()
-        return (result, with_error)
+        __codeOut.close()
+        return (result, __with_error)
 
 
 def py_compiler_view(request):
@@ -67,6 +76,7 @@ def py_compiler_view(request):
             lines_with_input = []
             line_counter = 0
             for code_line in code_lines:
+                code_line = code_line.split('#')
                 if 'import' in code_line:
                     if 'math' in code_line or 'random' in code_line or 'datetime' in code_line \
                             or 'this' in code_line:
@@ -93,25 +103,24 @@ def py_compiler_view(request):
                 request.session['inputs_lines'] = lines_with_input
                 return HttpResponseRedirect('input')
             if not danger_imports and not danger_using_files and not heavy_functions:
-                time.sleep(3)
                 que = queue.Queue()
                 thr = StoppableThread(target = lambda q, arg : q.put(run_code(arg)), args = (que, code))
                 thr.start()
-                for t in range(3):
+                for t in range(12):
+                    if not que.empty():
+                        # Результат работы кода есть
+                        thr_return = que.get()
+                        result = thr_return[0]
+                        with_error = thr_return[1]
+                        thr.stop()
+                        break
                     if t == 2:
-                        if not que.empty():
-                            thr_return = que.get()
-                            result = thr_return[0]
-                            with_error = thr_return[1]
-                            thr.stop()
-                            break
-                        else:
-                            result = 'Цикл бесконечен.'
-                            sys.stdout = ''
-                            with_error = True
-                            thr.stop()
-                            break
-                    time.sleep(1)
+                        result = 'RuntimeError: Длительность выполнения программы превышает лимит, возможно используется бесконечный цикл'
+                        sys.stdout = ''   # очистка ввода
+                        with_error = True
+                        thr.stop()
+                        break
+                    time.sleep(0.25)
             else:
                 with_error = True
                 result = ''
@@ -121,12 +130,30 @@ def py_compiler_view(request):
                     result = result + 'Похоже, вы пытались взаимодействовать с файлами!\n'
                 if heavy_functions:
                     result = result + 'Вы использовали функцию, внесенную в список исключений!\n'
-                
-            context = {
-                'last_code': code,
-                'with_error': with_error,
-                'code_result': result
-            }
+            if not with_error:
+                finish_variables_str = result.split('\n')[-2]
+                variables_with_value = finish_variables_str.split('SEPSEPsepSeP')  # сепаратор
+                finish_variables = []
+                for var_val in variables_with_value:
+                    if var_val:
+                        var_val_line = var_val.split('=')
+                        variable = var_val_line[0].strip()
+                        var_format = var_val_line[1].strip()
+                        value = var_val_line[2].strip()
+                        finish_variables.append(
+                            {
+                                'variable': variable,
+                                'format': var_format.replace('ist', 'list').replace('tr', 'str'),
+                                'value': value
+                            }
+                        )
+                context['finish_variables'] = finish_variables
+                result = result.split('\n')[:-2]
+    
+            context['last_code'] = code
+            context['with_error'] = with_error
+            context['code_result'] = result
+
     return render(request, 'py_compiler/compiler_page.html', context=context)
 
 
