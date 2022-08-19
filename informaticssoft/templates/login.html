@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;1,500;1,700&family=Mulish:wght@500&display=swap');
+        body {
+            font-family: 'Mulish', sans-serif !important;
+        }
+    </style>
+</head>
+<body>
+<div style="display: flex; justify-content: center; align-items: center">
+<form method="POST" style="padding-top: 60px; width: 500px">
+    <h1 style="padding-top: 60px; padding-bottom: 30px;" class="display-1 text-center">Авторизация</h1>       
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+    {{ error }}
+    </div>
+    {% endif %}           
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="inputUsername" class="form-label">Логин</label>
+        <input type="text" class="form-control" id="inputUsername" name="username">
+    </div>
+    <div class="mb-3">
+        <label for="inputPassword" class="form-label">Пароль</label>
+        <input type="password" class="form-control" id="inputPassword" name="password">
+    </div>
+    <button type="submit" class="btn btn-primary">Войти</button>
+</form>
+</div>
+<div class="container">
+    <hr>
+    <h6>&copy; made by alisson</h6>
+    <h6>&#10148; email: evgeniy.perov.05@mail.ru</h6>
+</div>
+</body>
+</html>

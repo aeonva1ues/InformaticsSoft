@@ -7,7 +7,7 @@
 {% if with_error %}
 {% if with_error == 'None' %}
 <div class="alert alert-success" role="alert">
-  Файл успешно сохранен
+  Файл(ы) успешно сохранен(ы)
 </div>
 {% else %}
 <div class="alert alert-danger" role="alert">
@@ -29,8 +29,8 @@
         </datalist>
         </div>
     <div class="mb-3">
-        <label for="formFile" class="form-label">Выберите файл</label>
-        <input class="form-control" type="file" id="formFile" name="fileName">
+        <label for="formFile" class="form-label">Выберите файл(ы)</label>
+        <input class="form-control" type="file" id="formFile" name="fileName" multiple>
     </div>
     <div class="mb-3">
         <button type="submit" class="btn btn-success btn-lg">Загрузить</button>
