@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аудио-галерея</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/contextmenu.css' %}">
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;1,500;1,700&family=Mulish:wght@500&display=swap');
+        body {
+            font-family: 'Mulish', sans-serif !important;
+        }
+        </style>
+</head>
+<body>
+<h1 class="text-start" style="padding-bottom:60px; cursor:pointer" onclick="window.location = window.location.pathname">Вернуться назад</h1>    
+{% if gallery_message %}
+<div class="alert alert-info" role="alert">
+    {{ gallery_message }}
+</div>
+{% endif %}
+{% if files %}    
+{% for file in files %}
+{% if file.type == 'audio' %}   
+    <div class="row border border-secondary">
+        <div class="col-3" style="padding-top: 20px; overflow-x:scroll">
+            <p>{{file.name}}</p>
+            <audio controls preload src="{{file.path}}">Браузер не поддерживает проигрывание аудио.</audio>
+        </div>
+    </div>
+{% endif %}  
+{% endfor %}
+{% endif %}
+</body>
+</html>

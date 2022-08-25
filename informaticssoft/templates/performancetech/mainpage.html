@@ -19,7 +19,7 @@
     <br>
     На данной странице вы можете найти хранилище файлов. Вы можете быстро <a href="#backgrounds">перейти к нему</a>. При необходимости загрузить
     свои файлы в хранилище перейдите в раздел <a href="load">"Загрузить"</a>.
-    <br>Если вам необходимо быстро подготовиться к <strong>выступлению</strong>, то в разделе <a href="create">"Создать"</a> вы можете собрать HTML-страницу или презентацию
+    <br>Если вам необходимо быстро подготовиться к <strong>выступлению</strong>, то в разделе <a href="create-performance">"Показ"</a> вы можете собрать HTML-страницу или презентацию
     для удобного показа фонов и запуска музыки.
     <br>Раздел <a href="notes">"Заметки"</a> предназначен для логирования и хранения рядом с звукооператором любой информации, которая может ему пригодиться.
     В этом разделе можно хранить сценарии, оставлять отчёты о проведенных мероприятиях, оставлять памятные заметки и многое другое.
@@ -36,7 +36,7 @@
         <figure class="figure border border-secondary" style="display: block; border-radius: 6px;">
             <svg class='visually-hidden' id="tick-{{oneColor_image.image_id}}" style="position: absolute; margin-left:160px; margin-top: 240px; height: 100px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM371.8 211.8C382.7 200.9 382.7 183.1 371.8 172.2C360.9 161.3 343.1 161.3 332.2 172.2L224 280.4L179.8 236.2C168.9 225.3 151.1 225.3 140.2 236.2C129.3 247.1 129.3 264.9 140.2 275.8L204.2 339.8C215.1 350.7 232.9 350.7 243.8 339.8L371.8 211.8z"/></svg>
             <img src='{{oneColor_image.path}}' class="figure-img img-fluid rounded" alt="{{ oneColor_image.name }}">
-        <figcaption class="figure-caption text-center">{{ oneColor_image.name }}</figcaption>
+        <figcaption class="figure-caption text-center" style="overflow-x:scroll">{{ oneColor_image.name }}</figcaption>
         </figure>
     </div>
     {% endfor %}
@@ -53,7 +53,7 @@
         <figure class="figure border border-secondary" style="display: block; border-radius: 6px;">
             <svg class="visually-hidden" id="tick-{{image.image_id}}" style="position: absolute; margin-left:160px; margin-top: 240px; height: 100px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M0 256C0 114.6 114.6 0 256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256zM371.8 211.8C382.7 200.9 382.7 183.1 371.8 172.2C360.9 161.3 343.1 161.3 332.2 172.2L224 280.4L179.8 236.2C168.9 225.3 151.1 225.3 140.2 236.2C129.3 247.1 129.3 264.9 140.2 275.8L204.2 339.8C215.1 350.7 232.9 350.7 243.8 339.8L371.8 211.8z"/></svg>
             <img src='{{image.path}}' class="figure-img img-fluid rounded" alt="{{ image.name }}">
-        <figcaption class="figure-caption text-center">{{ image.name }}</figcaption>
+        <figcaption class="figure-caption text-center" style="overflow-x:scroll">{{ image.name }}</figcaption>
         </figure>
     </div>
     {% endfor %}
@@ -70,7 +70,7 @@
 <h5 style="padding-top: 30px"><strong>{{loaded_audio_section.name}} ({{loaded_audio_section.files_count}})</strong></h5>   
     <div class="row border border-secondary">
     {% for audio in loaded_audio_section.audio %}
-    <div class="col-3 context-area-loadedaudio-{{audio.audio_id}}" style="padding-top: 20px">
+    <div class="col-3 context-area-loadedaudio-{{audio.audio_id}}" style="padding-top: 20px; overflow-x:scroll">
         <p>{{audio.name}}</p>
         <audio controls preload src="{{audio.path}}">Браузер не поддерживает проигрывание аудио.</audio>
     </div>
@@ -102,11 +102,19 @@
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Закрыть"></button>
       </div>
       <div class="toast-body">
-        <h6 id="msg-body">Test</h6>
+        <h6 id="msg-body">Текст уведомления</h6>
       </div>
     </div>
   </div>
 {% csrf_token %}
+<div class="fixed-bottom" style="transform: translateX(40px) translateY(-30px); cursor:pointer; user-select: none">
+    <form method="POST" action="{% url 'cancel-selecting' %}">
+        {% csrf_token %}
+        <button type="submit" style="border:none">
+            <a class="visually-hidden text-decoration-none text-black" id="cancel-selecting">Отменить выделение</a>
+        </button>    
+    </form> 
+</div>
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
@@ -149,6 +157,9 @@
     var menu = all_displays[0];
     const first_btn_default = document.getElementById('d-l1');
 
+
+    const cancel_selecting_btn = document.getElementById('cancel-selecting');
+
     const msg = document.getElementById('message');
 
     var csrf_token = $("input[name=csrfmiddlewaretoken]").val();
@@ -165,6 +176,8 @@
 
     ajaxPost('selected-files', {csrfmiddlewaretoken: csrf_token}, (response)=>{
         let files = response.files;
+        if(files.length > 0) {
+            cancel_selecting_btn.classList.remove('visually-hidden');
         for(let i=0; i<files.length; i++) {
                 let id = files[i].id;
                 for(let b=0; b<menuAreas.length; b++) {
@@ -177,7 +190,8 @@
                 };
                 };
             };
-    }) // получить все выделенные файлы
+        };
+    }); // получить все выделенные файлы
 
     menuAreas.forEach(function(menuArea) {
         menuArea.addEventListener( "contextmenu", event => {
@@ -282,6 +296,7 @@
             if (response.action === 'select') {
                 // При выборе файла
             notice(`Файл ${file_info['name']} был выбран`);
+            cancel_selecting_btn.classList.remove('visually-hidden');
             for(let i=0; i<menuAreas.length; i++) {
                 if(menuAreas[i].classList[1].split('-')[3] === file_id) {
                     menuAreas[i].style.border = 'thick solid #8ec127';
@@ -292,6 +307,12 @@
             } else {
                 // При повторном выборе файла (отмена выбора)
                 notice(`Отмена выбора файла ${file_info['name']}`);
+                ajaxPost('selected-files', {csrfmiddlewaretoken: csrf_token}, (response)=>{
+                    let files = response.files;
+                    if(files.length==0) {
+                        cancel_selecting_btn.classList.add('visually-hidden');
+                    };
+                });
                 for(let i=0; i<menuAreas.length; i++) {
                 if(menuAreas[i].classList[1].split('-')[3] === response.id) {
                     menuAreas[i].style.border = '';

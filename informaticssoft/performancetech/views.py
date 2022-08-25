@@ -5,8 +5,8 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import UploadFileForm, LoginUser
-from .models import Section, FileInStorage
+from .forms import UploadFileForm, LoginUser, CreateWebPresentation
+from .models import Section, FileInStorage, WebPresentation
 
 
 # Performancetech - софт для удобного длительного хранения файлов и данных для выступлений.
@@ -166,54 +166,56 @@ def performancetech_load_view(request):
         context['with_error'] = 'None'
         if form.is_valid():
             form_files = request.FILES.getlist('fileName')
-            
-            for form_file in form_files:
-                # filename = str(request.FILES['fileName']).strip()
-                filename = str(form_file).strip()
-                section_name = str(request.POST['sectionName']).strip()
-                correct_type = False
-                if filename.endswith('.png') or filename.endswith('.jpg') or filename.endswith('.jpeg') \
-                    or filename.endswith('.gif'):
-                    file_type = 'images'
-                    correct_type = True
-                elif filename.endswith('.mp3') or filename.endswith('.m4a') or filename.endswith('.ogg') \
-                    or filename.endswith('.wav'):
-                    file_type = 'audio'
-                    correct_type = True
-                if correct_type:
-                    all_dirs = os.listdir(f'{settings.BASE_DIR}/media/{file_type}/loaded')
-                    path_to_all_dirs = f'{settings.BASE_DIR}/media/{file_type}/loaded'
-                    dir_exists = False
-                    dir_to_load = f'{path_to_all_dirs}/{section_name}'
+            section_name = str(request.POST['sectionName']).strip()
+            if section_name != 'default':
+                for form_file in form_files:
+                    # filename = str(request.FILES['fileName']).strip()
+                    filename = str(form_file).strip()
+                    correct_type = False
+                    if filename.endswith('.png') or filename.endswith('.jpg') or filename.endswith('.jpeg') \
+                        or filename.endswith('.gif'):
+                        file_type = 'images'
+                        correct_type = True
+                    elif filename.endswith('.mp3') or filename.endswith('.m4a') or filename.endswith('.ogg') \
+                        or filename.endswith('.wav'):
+                        file_type = 'audio'
+                        correct_type = True
+                    if correct_type:
+                        all_dirs = os.listdir(f'{settings.BASE_DIR}/media/{file_type}/loaded')
+                        path_to_all_dirs = f'{settings.BASE_DIR}/media/{file_type}/loaded'
+                        dir_exists = False
+                        dir_to_load = f'{path_to_all_dirs}/{section_name}'
 
-                    for dir in all_dirs:
-                        if dir == section_name:
-                            dir_exists = True
-                            break
-                    section_in_db, was_created = Section.objects.get_or_create(section_name=section_name)
-                    if not dir_exists:
-                        os.makedirs(dir_to_load)
-                    files_from_dir = os.listdir(dir_to_load)
-                    no_file_in_dir = True
-                    for file in files_from_dir:
-                        if file.strip() == filename:
-                            context['with_error'] = f'Файл с таким именем уже существует ({filename})'
-                            no_file_in_dir = False
-                    if no_file_in_dir:
-                        with open(f'{path_to_all_dirs}/{section_name}/{filename}', 'wb+') as destination:
-                            for chunk in form_file.chunks():
-                                destination.write(chunk)
-                        new_file = FileInStorage(
-                            file_name = filename,
-                            file_type = file_type,
-                            path = f'{path_to_all_dirs}/{section_name}/{filename}',
-                            load_date = str(datetime.now()).split()[0],
-                            load_time = str(datetime.now()).split()[1].split('.')[0],
-                            section = section_in_db
-                        )
-                        new_file.save()
-                else:
-                    context['with_error'] = f'Файлы данного расширения недоступны для загрузки (.{filename.split(".")[1]})'
+                        for dir in all_dirs:
+                            if dir == section_name:
+                                dir_exists = True
+                                break
+                        section_in_db, was_created = Section.objects.get_or_create(section_name=section_name)
+                        if not dir_exists:
+                            os.makedirs(dir_to_load)
+                        files_from_dir = os.listdir(dir_to_load)
+                        no_file_in_dir = True
+                        for file_from_dir in files_from_dir:
+                            if file_from_dir.strip() == filename:
+                                context['with_error'] = f'Файл с таким именем уже существует ({filename})'
+                                no_file_in_dir = False
+                        if no_file_in_dir:
+                            with open(f'{path_to_all_dirs}/{section_name}/{filename}', 'wb+') as destination:
+                                for chunk in form_file.chunks():
+                                    destination.write(chunk)
+                            new_file = FileInStorage(
+                                file_name = filename,
+                                file_type = file_type,
+                                path = f'{path_to_all_dirs}/{section_name}/{filename}',
+                                load_date = str(datetime.now()).split()[0],
+                                load_time = str(datetime.now()).split()[1].split('.')[0],
+                                section = section_in_db
+                            )
+                            new_file.save()
+                    else:
+                        context['with_error'] = f'Файлы данного расширения недоступны для загрузки (.{filename.split(".")[1]})'
+            else:
+                context['with_error'] = 'Недопустимое название раздела'
         else:
             context['with_error'] = 'Обязательный пункт(ы) пропущен'
             
@@ -268,10 +270,19 @@ def selectedFilesPost(request):
 
 
 @login_required
+def cancelSelectingFilesPost(request):
+    if request.method == 'POST':
+        request.session['selected-files'] = []
+        return redirect('/performancetech/')
+
+@login_required
 def chooseFilePost(request):
     # Если файл уже выбран - отменить выбор, в ином случае - выбрать файл
     file_id = request.POST.get('id')
-    file_path = request.POST.get('path')
+
+    dir_path = request.POST.get('path')
+    file_path = '/'+'/'.join('/'.join(dir_path.split('\\')[4:]).split('/')[1:])
+
     file_name = request.POST.get('name')
     file_type = request.POST.get('type')
     # Если уже выбирались файлы ранее
@@ -298,3 +309,105 @@ def chooseFilePost(request):
         # Если ранее файлы не выбирались. В любом случае будет select
         request.session['selected-files'] = [{'id': file_id, 'path': file_path, 'name': file_name, 'type': file_type}]
         return JsonResponse({'action': 'select'}, status=200)
+
+
+# Создание веб-показа или презентации
+@login_required
+def create_performance_view(request):
+    context = {}
+    if 'selected-files' in request.session:
+        selected_files = request.session['selected-files']
+        selected_files_count = len(selected_files)
+        if selected_files_count > 0:
+            context['selected_files_count'] = selected_files_count
+    context['active'] = 'createperformance'
+    # Создание веб-презентации
+    if request.method == 'POST':
+        form = CreateWebPresentation(request.POST)
+        if form.is_valid():
+            presentation_name = request.POST.get('performanceName')
+            notes = None
+            if 'performanceNotes' in request.POST:
+                notes = request.POST.get('performanceNotes')
+            presentation_in_db, was_created = WebPresentation.objects.get_or_create(
+                name=presentation_name,
+                is_active=True,
+                defaults={
+                    # Поля для заполнения в случае отсутствия совпадений
+                    'creation_date': str(datetime.now()).split()[0],
+                    'files': selected_files,  # задается при прогрузке страницы
+                    'files_count': len(selected_files),
+                    'notes': notes
+                    }
+                )
+            if was_created == False:
+                # Если комната уже существует, проверяем поле is_active
+                if presentation_in_db.is_active:
+                    # Комната с таким именем уже существует и она активна. Выдать ошибку
+                    context['error'] = 'Активный показ с таким именем уже существует'
+                else:
+                    context['message'] = 'Показ успешно создан'
+    
+
+    active_presentations = WebPresentation.objects.filter(is_active=True)
+    if len(active_presentations):
+        # Если есть активные показы - отобразить
+        context['active_presentations'] = active_presentations
+    
+    
+    return render(request, 'performancetech/create_perf.html', context=context)
+
+
+@login_required
+def show_presentation_view(request, id):
+    context = {}
+    context['active'] = 'createperformance'
+    # Страница показа, параметр id - id показа
+    presentation = WebPresentation.objects.get(id=id)
+    if presentation:
+        context['presentation'] = presentation
+        if not presentation.is_active:
+            # Пометка в верхней части страницы
+            context['message'] = 'Презентация была помещена в архив'
+        presentation_files = eval(presentation.files)  # формирует список словарей из строки таблицы
+        context['files'] = presentation_files
+        context['files_count'] = len(presentation_files)
+        
+        
+        if 'pm' in request.GET:
+            url_arg = request.GET.get('pm')  # pm - метод показа, если img, то выдается галерея фото, если audio
+                                            # то галерея звуков
+            
+            if url_arg == 'images':
+                # Вернуть страницу с изображениями
+                img_count = 0
+                for presentation_file in presentation_files:
+                    if presentation_file['type'] == 'images':
+                        img_count += 1
+                if img_count > 0:
+                    context['images_count'] = img_count
+                else:
+                    context['gallery_message'] = 'Изображения не были добавлены'
+                return render(request, 'performancetech/images_gallery.html', context=context)
+            
+            elif url_arg == 'audio':
+                # Вернуть страницу с аудио-галереей
+                audio_count = 0
+                for presentation_file in presentation_files:
+                    if presentation_file['type'] == 'audio':
+                        audio_count += 1
+                if audio_count == 0:
+                    context['gallery_message'] = 'Аудиофайлы не были добавлены'
+                return render(request, 'performancetech/audio_gallery.html', context=context)
+    else:
+        # Если веб-презентация не найдена - возвращается страница для создания показов
+        return redirect('/performancetech/create-performance')
+    return render(request, 'performancetech/presentation_page.html', context=context)
+
+
+@login_required
+def deletePresentationPost(request):
+    if request.method == 'POST':
+        presentation_id = int(request.POST.get('presentationID'))
+        presentation = WebPresentation.objects.filter(id=presentation_id).update(is_active=False)
+        return redirect('/performancetech/create-performance')

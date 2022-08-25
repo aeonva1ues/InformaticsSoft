@@ -1,0 +1,114 @@
+{% extends 'performancetech/base.html' %}
+{% load static %}
+{% block title %}
+<title>Создание показа</title>
+{% endblock %}
+{% block content %}
+<h1 class="display-4">Как это работает?</h1>
+<p class="fs-4" style="padding-top: 30px">
+    В данном разделе вы можете создать презентацию для показа. Презентация - более удобный вариант переключения фото и аудио файлов, нежели проводник, поскольку позволяет пользователю
+    находить необходимые ему файлы в одном месте. 
+    <br>
+    На данный момент реализована только веб-презентация, автоматическое создание PowerPoint презентации будет разработано в будущем.
+    <br>
+    Для создания презентации выберите файлы в главном меню, а затем нажмите на кнопку "Создать показ" в данном разделе. Затем выберите желаемый тип презентации и следуйте дальнейшим инструкциям
+</p>
+<h1 class="display-4">Веб-презентация</h1>
+<p class="fs-4" style="padding-top: 30px">
+  Данный тип презентации представляет собой слайд-шоу из изображений, а также отдельную вкладку с аудио (если они есть). Благодаря названию легко догадаться, что презентация запускается в браузере. 
+  <br> <br> <strong>Плюсы:</strong> <br>
+  * Быстрая генерация презентации;
+  <br>
+  * К презентации можно будет вернуться в любой момент в будущем;
+  <br>
+  * Презентацию можно поместить в архив (удалить), но при необходимости, доступ к ней у вас будет всегда;
+  <br>
+  * К презентации можно добавить примечания, например, часть сценария (или даже весь сценарий) мероприятия!
+  <br> <br> <strong>Минусы:</strong> <br>
+  * При возникновении ошибки на сервере, показ и весь прочий функционал может оказаться недоступным;
+  <br>
+  * Презентацию не получится переслать как обычный файл. Данный вид показа является лишь сгруппированным отображением файлов, выбранных пользователем
+</p>
+{% if message %}
+<div class="alert alert-success" role="alert">
+  {{ message }}
+</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-danger" role="alert">
+  {{ error }}
+</div>
+{% endif %}
+<!-- Кнопка-триггер модального окна -->
+<!-- Button trigger modal -->
+<div class="d-grid gap-2">
+<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalCreate">
+    Создать показ
+  </button>
+</div>
+  <!-- Modal -->
+  <div class="modal fade" id="modalCreate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalCreateLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-black" id="modalCreateLabel">Вид показа</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% if selected_files_count %}
+            <h6 class="text-center text-black">Файлов выбрано: {{selected_files_count}}</h6>
+            <div class="d-grid gap-2 col-6 mx-auto" style="padding-top: 20px">
+                <button class="btn btn-secondary" type="button">Презентация</button>
+                <button class="btn btn-secondary" type="button" data-bs-target="#createWebPresentationModal" data-bs-toggle="modal">Веб-презентация</button>
+            </div>
+            {% else %}
+            <h6 class="text-center text-black">Для создания показа выберите файлы из <a href="/performancetech/">главного меню</a></h6>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="createWebPresentationModal" aria-hidden="true" aria-labelledby="createWebPresentationModalLabel" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createWebPresentationModalLabel">Создание веб-презентации</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <form method="POST">
+        {% csrf_token %}
+        <div class="modal-body">
+            <div class="input-group mb-3" style="padding-bottom:30px">
+                <span class="input-group-text" id="input-name-description">Название показа</span>
+                <input name="performanceName" type="text" class="form-control" aria-label="Поле ввода названия для показа" aria-describedby="input-name-description">
+            </div>
+
+            <div class="form-floating">
+              <textarea class="form-control" placeholder="Необязательно к заполнению" id="performanceNotes" style="height: 100px" name="performanceNotes"></textarea>
+              <label for="performanceNotes">Описание</label>
+            </div>
+        </div>
+            <div class="d-grid gap-2">
+                <button class="btn btn-success" type="submit">Создать</button>
+            </div>  
+        </form>
+      </div>
+    </div>
+  </div>
+{% if active_presentations %}
+{% for presentation in active_presentations %}  
+<div class="card w-100">
+  <div class="card-body">
+    <h5 class="card-title">{{ presentation.name }}</h5>
+    <p class="card-text">
+        Файлов добавлено: {{ presentation.files_count }}
+        <br>
+        Создан: {{ presentation.creation_date }}
+    </p>
+    <a href="/performancetech/{{presentation.id}}/show" class="btn btn-primary">Открыть</a>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% endblock %}

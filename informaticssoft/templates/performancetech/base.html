@@ -33,43 +33,43 @@
         </li>
         {% endif %}
 
-        {% if active == 'createpage' %}
+        {% if active == 'createperformance' %}
         <li class="nav-item" style="background: rgb(110, 108, 108); padding: 0px 20px">
-          <a class="nav-link fs-4 text-white" aria-current="page" href="create">Создать</a>
+          <a class="nav-link fs-4 text-white" aria-current="page" href="/performancetech/create-performance">Показ</a>
         </li>
         {% else %}
         <li class="nav-item" style="padding: 0px 20px">
-          <a class="nav-link fs-4 text-white" aria-current="page" href="create">Создать</a>
+          <a class="nav-link fs-4 text-white" aria-current="page" href="/performancetech/create-performance">Показ</a>
         </li>
         {% endif %}
 
         {% if active == 'loadpage' %}
         <li class="nav-item" style="background: rgb(110, 108, 108); padding: 0px 20px">
-          <a class="nav-link fs-4 text-white" aria-current="page" href="load">Загрузить</a>
+          <a class="nav-link fs-4 text-white" aria-current="page" href="/performancetech/load">Загрузить</a>
         </li>
         {% else %}  
         <li class="nav-item" style="padding: 0px 20px">
-          <a class="nav-link fs-4 text-white" aria-current="page" href="load">Загрузить</a>
+          <a class="nav-link fs-4 text-white" aria-current="page" href="/performancetech/load">Загрузить</a>
         </li>
         {% endif %}
 
         {% if active == 'notespage' %}
         <li class="nav-item" style="background: rgb(110, 108, 108); padding: 0px 20px"></li>
-          <a class="nav-link fs-4 text-white" href="notes">Заметки</a>
+          <a class="nav-link fs-4 text-white" href="/performancetech/notes">Заметки</a>
         </li>
         {% else %}
         <li class="nav-item" style="padding: 0px 20px"></li>
-          <a class="nav-link fs-4 text-white" href="notes">Заметки</a>
+          <a class="nav-link fs-4 text-white" href="/performancetech/notes">Заметки</a>
         </li>
         {% endif %}
 
         {% if active == 'historypage' %}
         <li class="nav-item" style="background: rgb(110, 108, 108); padding: 0px 20px"></li>
-          <a class="nav-link fs-4 text-white" href="history">История</a>
+          <a class="nav-link fs-4 text-white" href="/performancetech/history">История</a>
         </li>
         {% else %}
         <li class="nav-item" style="padding: 0px 20px"></li>
-          <a class="nav-link fs-4 text-white" href="history">История</a>
+          <a class="nav-link fs-4 text-white" href="/performancetech/history">История</a>
         </li>
         {% endif %}
         {% if user.is_authenticated %}
