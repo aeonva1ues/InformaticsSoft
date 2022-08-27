@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лицей №2</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;1,500;1,700&family=Mulish:wght@500&display=swap');
+        body {
+            font-family: 'Mulish', sans-serif !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid gap-5">
+          <a class="navbar-brand fs-3 fw-semibold" href="/">Licey2</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Переключатель навигации">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle fs-6 fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Приложения
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="/performancetech/">PerformanceTech</a></li>
+                      <li><a class="dropdown-item" href="/compiler/">py_compiler</a></li>
+                    </ul>
+                  </div>
+            </ul>
+            </ul>
+          </div>
+        </div>
+</nav>
+<div class="container" style="padding-top: 240px">
+    <h1 class="display-3 text-center" style="padding-bottom: 20px;">Доступные приложения</h1>
+    <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">PerformanceTech</h5>
+              <p class="card-text">Функционал, направленный на упрощение подготовки к мероприятиям для звукооператоров и ведущих</p>
+              <a href="/performancetech/" class="btn btn-primary">Перейти</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">py_compiler</h5>
+              <p class="card-text">Справочные материалы, практика, а также редактор кода для изучения основ Python</p>
+              <a href="/compiler/" class="btn btn-primary">Перейти</a>
+            </div>
+          </div>
+        </div>
+      </div>
+</div>
+<div class="container">
+    <hr>
+    <h6>&copy; made by alisson</h6>
+    <h6>&#10148; email: evgeniy.perov.05@mail.ru</h6>
+</div>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+</body>
+</html>
