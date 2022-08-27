@@ -32,7 +32,7 @@ def run_code(__code):
     __with_error = False
     __codeOut = io.StringIO()
     sys.stdout = __codeOut
-    try:
+    try:    
         exec(f'''{__code}
         \n__ALLVARIABLES_STR = ''
         \n__ALLVARIABLES_U = dir()
@@ -47,7 +47,7 @@ def run_code(__code):
         sys.stderr = sys.__stderr__
         result = __codeOut.getvalue()
     except Exception as code_error:
-        with_error = True
+        __with_error = True
         result = code_error
     finally:
         __codeOut.close()
@@ -64,7 +64,7 @@ def py_compiler_view(request):
     if request.method == 'POST':
         form = CheckCode(request.POST)
         if form.is_valid():
-            code = form.cleaned_data['code_editor']
+            code = request.POST.get('code_editor')
             code_lines = code.split('\n')
             request.session['code_lines'] = code_lines
             # Опасные импорты - Все модули, кроме Math, Random, Datetime
@@ -76,7 +76,6 @@ def py_compiler_view(request):
             lines_with_input = []
             line_counter = 0
             for code_line in code_lines:
-                code_line = code_line.split('#')
                 if 'import' in code_line:
                     if 'math' in code_line or 'random' in code_line or 'datetime' in code_line \
                             or 'this' in code_line:
@@ -86,7 +85,7 @@ def py_compiler_view(request):
                         pass
                     else:
                         danger_imports = True
-                if '.read()' in code_line or '.write()' in code_line:
+                if 'file' in code_line or '.read()' in code_line or '.write()' in code_line:
                     danger_using_files = True
                 if 'help()' in code_line:
                     heavy_functions = True
@@ -116,9 +115,9 @@ def py_compiler_view(request):
                         break
                     if t == 2:
                         result = 'RuntimeError: Длительность выполнения программы превышает лимит, возможно используется бесконечный цикл'
-                        sys.stdout = ''   # очистка ввода
                         with_error = True
                         thr.stop()
+                        # sys.stdout = ''   # очистка ввода
                         break
                     time.sleep(0.25)
             else:
