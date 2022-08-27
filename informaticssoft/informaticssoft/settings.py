@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['25.49.213.138', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'mainmenu.apps.MainmenuConfig',
     'py_compiler.apps.PyCompilerConfig',
     'performancetech.apps.PerformancetechConfig',
     'django.contrib.admin',

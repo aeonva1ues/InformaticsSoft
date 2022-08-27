@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('py_compiler.urls')),
     path('', include('performancetech.urls')),
+    path('', include('mainmenu.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
