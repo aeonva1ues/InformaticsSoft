@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import UploadFileForm, LoginUser, CreateWebPresentation
-from .models import Section, FileInStorage, WebPresentation
+from .models import Section, FileInStorage, LoadedFile, DeletedFile, WebPresentation
 
 
 # Performancetech - софт для удобного длительного хранения файлов и данных для выступлений.
@@ -212,6 +212,14 @@ def performancetech_load_view(request):
                                 section = section_in_db
                             )
                             new_file.save()
+                            new_loaded_file = LoadedFile(
+                                file_name = filename,
+                                file_type = file_type,
+                                section_name = section_in_db.section_name,
+                                load_date=str(datetime.now()).split()[0],
+                                load_time = str(datetime.now()).split()[1].split('.')[0]
+                            )
+                            new_loaded_file.save()
                     else:
                         context['with_error'] = f'Файлы данного расширения недоступны для загрузки (.{filename.split(".")[1]})'
             else:
@@ -241,6 +249,12 @@ def deleteFilePost(request):
     file_id = request.POST.get('id')
     file_path = request.POST.get('path')
     file_in_db = FileInStorage.objects.get(id=file_id)
+    deleted_file = DeletedFile(file_name=file_in_db.file_name, 
+                            file_type=file_in_db.file_type, 
+                            del_date=str(datetime.now()).split()[0],
+                            del_time = str(datetime.now()).split()[1].split('.')[0]
+                            )
+    deleted_file.save()
     # Если файл был выбран до удаления, то убрать из сессии
     if 'selected-files' in request.session:
         selected_files = request.session['selected-files']
@@ -354,7 +368,6 @@ def create_performance_view(request):
         # Если есть активные показы - отобразить
         context['active_presentations'] = active_presentations
     
-    
     return render(request, 'performancetech/create_perf.html', context=context)
 
 
@@ -411,3 +424,55 @@ def deletePresentationPost(request):
         presentation_id = int(request.POST.get('presentationID'))
         presentation = WebPresentation.objects.filter(id=presentation_id).update(is_active=False)
         return redirect('/performancetech/create-performance')
+
+
+# ИСТОРИЯ ВЗАИМОДЕЙСТВИЯ С ФАЙЛАМИ, ПОКАЗАМИ
+@login_required
+def history_view(request):
+    context = {}
+    context['active'] = 'historypage'
+
+    # История для файлов
+
+    loaded_files = LoadedFile.objects.all().order_by('-load_date').order_by('-load_time')
+    deleted_files = DeletedFile.objects.all().order_by('-del_date').order_by('-del_time')
+    del_files_history = []
+    load_files_history = []
+
+    for loaded_file in loaded_files:
+        load_files_history.append(
+            {
+                'name': loaded_file.file_name,
+                'type': loaded_file.file_type,
+                'date': loaded_file.load_date,
+                'time': loaded_file.load_time,
+                'section': loaded_file.section_name,
+            }
+        )
+    for deleted_file in deleted_files:
+        del_files_history.append(
+            {
+                'name': deleted_file.file_name,
+                'type': deleted_file.file_type,
+                'date': deleted_file.del_date,
+                'time': deleted_file.del_time,
+            }
+        )
+    context['load_files_history'] = load_files_history
+    context['del_files_history'] = del_files_history
+
+
+    # История для показов
+    performances = WebPresentation.objects.all().order_by('-creation_date')
+    performances_history = []
+    for performance in performances:
+        performances_history.append(
+            {
+                'date': performance.creation_date,
+                'name': performance.name,
+                'files_count': performance.files_count
+            }
+        )
+
+    context['performances_history'] = performances_history
+    return render(request, template_name='performancetech/history.html', context=context)
