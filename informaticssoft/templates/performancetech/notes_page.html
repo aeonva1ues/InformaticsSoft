@@ -1,0 +1,104 @@
+{% extends 'performancetech/base.html' %}
+{% block title %}
+<title>Пользовательская заметка</title>
+{% endblock %}
+
+{% block content %}
+{% if message %}
+<div class="alert alert-warning" role="alert">
+    {{ message }}
+</div>
+{% endif %}
+<h1 class="text-start" style="user-select:none; cursor: pointer" onclick="window.location = '/performancetech/notes'">Вернуться назад</h1>
+<h2 class="text-center" style="padding-top: 80px">{{ note.note_name }}</h2>
+
+    {% if edit_mode %}
+    <form method="POST">
+    <div class="form-floating">
+        <textarea name="changed-text" id="area-with-note" class="form-control" style="height: 100px"></textarea>
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body">
+            {% for line in content_lines %}
+            {{ line.strip }} <br>
+            {% endfor %}
+        </div>
+      </div>
+    {% endif %}  
+
+{% if not_deleted_note %} 
+
+{% if edit_mode %}
+        {% csrf_token %}
+    <button id="apply-edit" type="submit" class="btn btn-success btn-lg">Сохранить изменения</button>
+    <button id="cancel-edit" type="submit" class="btn btn-danger btn-lg">Отменить изменения</button>
+    <input class="visually-hidden" type="text" name="action" id="action-field">
+    </form>
+{% else %}
+<div class="text-start" style="padding-top:4px">
+<form method="POST">
+    {% csrf_token %}
+<button id="edit-btn" type="submit" class="btn btn-success btn-lg">Редактировать</button>
+<button id="del-btn" type="submit" class="btn btn-danger btn-lg">Удалить</button>
+<input class="visually-hidden" type="text" name="action" id="action-field">
+</form>
+</div>
+{% endif %}
+{% endif %}
+{% if edit_mode %}
+<script>
+    // Скрипт активен только при режиме редактирования
+    function replaceAll(string, search, replace) {
+        return string.split(search).join(replace);
+    };
+
+    const text_field = document.getElementById('area-with-note');
+
+    const apply_edit_btn = document.getElementById('apply-edit');
+    const cancel_edit_btn = document.getElementById('cancel-edit');
+    const edit_mode_action = document.getElementById('action-field');
+
+
+    cancel_edit_btn.onclick = function() {
+        edit_mode_action.value = 'cancel-edit';
+    };
+    apply_edit_btn.onclick = function() {
+        edit_mode_action.value = 'apply-edit';
+    };
+
+    let content = `{% for line in content_lines %}
+            {{ line.strip }} <br>
+            {% endfor %}
+            `;
+    let new_content = '';
+    let lines = content.split('\n');
+    for(let i=0; i<lines.length; i++) {
+        let new_line = lines[i];
+        new_line = new_line.trim();
+        console.log(new_line);
+        new_line = replaceAll(new_line, '<br>', '\n')
+        if(!(new_line === '')) {
+        new_content = new_content + new_line;
+        };
+    };
+    text_field.style.height = lines.length*15+'px';  // +- 15px на одну строку
+    text_field.value = new_content;
+</script>
+{% endif %}
+
+<script>
+    'use strict';
+    const edit_btn = document.getElementById('edit-btn');
+    const del_btn = document.getElementById('del-btn');
+    const action_field = document.getElementById('action-field');
+
+    // Изменение статуса инпута для последующей передачи по пост запросу
+    del_btn.onclick = function() {
+        action_field.value = 'del'
+    };
+    edit_btn.onclick = function() {
+        action_field.value = 'change'
+    };
+</script>
+{% endblock %}

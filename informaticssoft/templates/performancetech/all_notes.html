@@ -1,0 +1,95 @@
+{% extends 'performancetech/base.html' %}
+{% block title %}
+<title>Пользовательские заметки</title>
+{% endblock %}
+
+{% block content %}
+{% if error_message %}
+<div class="alert alert-warning" role="alert">
+    {{ error_message }}
+</div>
+{% endif %}
+{% if success_message %}
+<div class="alert alert-success" role="alert">
+    {{ success_message }}
+</div>
+{% endif %}
+<div class="d-grid gap-2" style="padding-bottom: 40px">
+    <button class="btn btn-info" type="button" id="add-note-btn">Добавить заметку</button>
+    <button class="btn btn-info" type="button" id="show-notes-btn">Смотреть заметки</button>
+</div>
+<form method="POST" id="add_note_form" style="padding-bottom: 60px">
+    <h1>Форма на добавление</h1>
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="nameInput" class="form-label">Название заметки</label>
+        <input name="nameInput" type="text" class="form-control" id="nameInput" aria-describedby="inputNameInfo">
+        <div id="inputNameInfo" class="form-text">(Необязательный пункт)</div>
+    </div>
+    <div class="mb-3">
+        <div class="form-floating">
+            <textarea name="notesInput" class="form-control" placeholder="Текст вашей заметки" id="notesInput" style="height: 300px"></textarea>
+            <label for="notesInput">Заметка</label>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+</form>
+
+<div id="all_notes">
+<h1>Добавленные заметки</h1>
+    {% if notes %}
+    {% for note in notes %}
+    <div class="card w-100">
+        <div class="card-body">
+        <h5 class="card-title">{{ note.creation_date }} {{ note.creation_time }} || {{ note.note_name }}</h5>
+        <div class="d-grid gap-2">
+            <a href="notes/{{note.id}}"><button class="btn btn-info" type="button">Читать заметку</button></a>
+        </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <h3 class="text-center">Пока пусто</h3>
+    {% endif %}
+</div>
+<script>
+'use strict';
+const add_note_btn = document.getElementById('add-note-btn');
+const add_note_form = document.getElementById('add_note_form');
+
+const show_notes_btn = document.getElementById('show-notes-btn');
+const all_notes = document.getElementById('all_notes');
+
+var state = 'btns_only'; // btns_only ИЛИ form ИЛИ all_notes
+
+function show_by_state(state) {
+    if(state === 'btns_only') {
+        add_note_form.classList.add('visually-hidden');
+        all_notes.classList.add('visually-hidden');
+    } else if(state === 'form') {
+        if(!add_note_form.classList[0]) {
+            add_note_form.classList.add('visually-hidden');
+        } else {
+        add_note_form.classList.remove('visually-hidden');
+        };
+    } else if(state === 'all_notes') {
+        if(!all_notes.classList[0]) {
+            all_notes.classList.add('visually-hidden');
+        } else {
+        all_notes.classList.remove('visually-hidden');
+        };
+    };
+};
+
+show_by_state(state);
+
+add_note_btn.onclick = function addNoteForm() {
+    state = 'form';
+    show_by_state(state);
+};
+show_notes_btn.onclick = function allNotes() {
+    state = 'all_notes';
+    show_by_state(state);
+};
+</script>
+{% endblock %}
