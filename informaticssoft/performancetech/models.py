@@ -38,3 +38,11 @@ class WebPresentation(models.Model):
     is_active = models.BooleanField(default=True)
     files = models.TextField(default=None)
     files_count = models.IntegerField(default=0)
+
+
+class UserNote(models.Model):
+    note_name = models.CharField(max_length=50, blank=True, null=True)
+    note_text = models.TextField(default=None)
+    creation_date = models.DateField()
+    creation_time = models.TimeField()
+    is_active = models.BooleanField(default=True)

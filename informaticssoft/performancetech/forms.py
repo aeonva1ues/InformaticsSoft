@@ -12,3 +12,8 @@ class LoginUser(forms.Form):
 
 class CreateWebPresentation(forms.Form):
     performanceName = forms.CharField(max_length=255)
+
+
+class CreateNote(forms.Form):
+    nameInput = forms.CharField(max_length=255, required=False)
+    notesInput = forms.CharField()

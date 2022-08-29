@@ -5,8 +5,8 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import UploadFileForm, LoginUser, CreateWebPresentation
-from .models import Section, FileInStorage, LoadedFile, DeletedFile, WebPresentation
+from .forms import UploadFileForm, LoginUser, CreateWebPresentation, CreateNote
+from .models import Section, FileInStorage, LoadedFile, DeletedFile, WebPresentation, UserNote
 
 
 # Performancetech - софт для удобного длительного хранения файлов и данных для выступлений.
@@ -476,3 +476,69 @@ def history_view(request):
 
     context['performances_history'] = performances_history
     return render(request, template_name='performancetech/history.html', context=context)
+
+
+def all_notes_view(request):
+    context = {}
+    context['active'] = 'notespage'
+
+    if request.method == 'POST':
+        form = CreateNote(request.POST)
+        if form.is_valid():
+            date_now = str(datetime.now()).split()[0]
+            time_now = str(datetime.now()).split()[1].split('.')[0]
+            note_text = request.POST.get('notesInput')
+            note_name = request.POST.get('nameInput')
+            
+            new_note = UserNote(
+                note_name = note_name,
+                note_text = note_text,
+                creation_date = date_now,
+                creation_time = time_now
+            )
+            new_note.save()
+            context['success_message'] = 'Заметка успешно добавлена'
+        else:
+            context['error_message'] = 'Не удалось добавить заметку'
+
+    # Отображение всех заметок
+    all_notes = UserNote.objects.all().filter(is_active=True)
+    if all_notes:
+        context['notes'] = all_notes
+
+    return render(request, template_name='performancetech/all_notes.html', context=context)
+
+
+def notes_page_view(request, notes_id):
+    this_note_in_db = UserNote.objects.all().filter(id=notes_id)
+    context = {}
+    context['active'] = 'notespage'
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'del':
+            # Отправка заметки в архив
+            this_note_in_db.update(is_active=False)
+            return redirect('/performancetech/notes')
+        elif action == 'change':
+            # Редактирование заметки
+            context['edit_mode'] = True
+        elif action == 'apply-edit':
+            changed_text = request.POST.get('changed-text')
+            this_note_in_db.update(note_text=changed_text)
+
+        elif action == 'cancel-edit':
+            return redirect(f'/performancetech/notes/{notes_id}')
+
+    if this_note_in_db:
+        this_note = this_note_in_db[0]
+        if not this_note.is_active:
+            context['message'] = 'Заметка была помещена в архив'
+        else:
+            context['not_deleted_note'] = True
+        context['note'] = this_note
+        context['content_lines'] = this_note.note_text.split('\n')
+        return render(request, template_name='performancetech/notes_page.html', context=context)
+    
+    else:
+        return redirect('/performancetech/notes')
