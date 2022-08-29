@@ -112,12 +112,13 @@ def py_compiler_view(request):
                         result = thr_return[0]
                         with_error = thr_return[1]
                         thr.stop()
+                        sys.stdout = ''   # очистка ввода
                         break
                     if t == 2:
                         result = 'RuntimeError: Длительность выполнения программы превышает лимит, возможно используется бесконечный цикл'
                         with_error = True
                         thr.stop()
-                        # sys.stdout = ''   # очистка ввода
+                        sys.stdout = ''   # очистка ввода
                         break
                     time.sleep(0.25)
             else:
