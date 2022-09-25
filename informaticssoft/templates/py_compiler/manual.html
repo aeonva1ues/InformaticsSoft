@@ -3,196 +3,36 @@
 <title>Python | Справочник</title>
 {% endblock %}
 {% block content %}
-<div class="container">
+<div class="container" style="color: white">
 <h1 class="display-3" style="padding: 80px">Справочные материалы<br>Python</h1>
-<h1 class="display-6 text-start">Переменные и типы данных</h1>
-<div class="accordion" id="about-vars">
+{% for theme_and_section in themes_and_sections %}
+<h1 class="display-6 text-start">
+  {% if theme_and_section.section_id == '1' %}
+  Переменные и типы данных
+  {% elif theme_and_section.section_id == '2' %}
+  Операторы, функции ввода и вывода
+  {% elif theme_and_section.section_id == '3' %}
+  Условия
+  {% elif theme_and_section.section_id == '4' %}
+  Циклы
+  {% endif %}
+</h1>
+<div class="accordion" id="about-vars" style="padding-bottom: 30px">
+  {% for themes_in_section in theme_and_section.content_list %}
   <div class="accordion-item bg-dark text-white">
-    <h2 class="accordion-header" id="headingOne-vars">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne-vars" aria-expanded="true" aria-controls="collapseOne-vars">
-          Что такое переменная в языке программирования?
+    <h2 class="accordion-header" id="heading-{{ themes_in_section.id }}">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ themes_in_section.id }}" aria-expanded="true" aria-controls="collapse-{{ themes_in_section.id }}">
+          {{ themes_in_section.header }}
       </button>
     </h2>
-    <div id="collapseOne-vars" class="accordion-collapse collapse" aria-labelledby="headingOne-vars" data-bs-parent="#about-vars">
+    <div id="collapse-{{ themes_in_section.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ themes_in_section.id }}" data-bs-parent="#about-{{ themes_in_section.id }}">
       <div class="accordion-body">
-        Переменная - именованный адрес, указывающий на определенную область памяти. Для самого базового понимания достаточно знать то, что переменная может принимать в себя какое-либо значение, а затем использоваться в других частях кода.
-          Также обратите внимание на то, что в программировании знак "=" не является привычным нам "равно". Этот знак обозначает <strong>присваивание</strong>, то есть, запись вида: <code>a = 1</code> означает, что была задана переменная <strong>a</strong> с значением <strong>1</strong>
+        {{ themes_in_section.body|safe }}
       </div>
     </div>
   </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTwo-vars">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo-vars" aria-expanded="false" aria-controls="collapseTwo-vars">
-        Типы данных
-      </button>
-    </h2>
-    <div id="collapseTwo-vars" class="accordion-collapse collapse bg-dark text-white" aria-labelledby="headingTwo-vars" data-bs-parent="#about-vars">
-      <div class="accordion-body">
-       В любой языке программирования существуют типы данных, но в разных языках они могут различаться. В Python существуют следующие типы данных:
-          <br><strong><code>*</code>Integer (int)</strong> - целые числа, например: 1, -1
-          <br><strong><code>*</code>String (str)</strong> - строки, например "Hello, world!", "123", "??()&&(!"
-          <br><strong><code>*</code>Boolean (bool)</strong> - логический тип, например: True, False, 1, 0
-          <br><strong><code>*</code>Float (float)</strong> - числа с плавающей запятой(точкой): 1.1, -3.5, 5.0
-          <br><strong><code>*</code>List (list)</strong> - списки, например: [1, 2, 3, 4, 1, 2, 3], ['Молоко', 'Хлеб', 'Масло']
-          <br><strong>Dictionaries (dict)</strong> - словари, например: {name: 'Evgenii', surname: 'Perov', year_of_birth: 2005, nicknames: ['alisson', 'aeonvalues', 'noflagg']}
-          <br><strong>Tuple (tuple) - кортеж, например: (1,2,3,4, 1, 2, 3), ('Молоко', 'Хлеб', 'Масло')</strong>
-          <br><strong>Set (set) - множество, например: {1,2,3,4}, {'Молоко', 'Хлеб', 'Масло'}</strong>
-          <br><strong>None (None)</strong> - нейтральное значение, пустота
-            <br>
-          <strong><code>*</code> - обязательны для базового понимания</strong>
-          <br>Если вы сталкиваетесь с этим впервые, то, скорее всего, вы не поймете суть существования половины из этих типов, а также различия между списками, кортежами и множествами.
-          Если вы не собираетесь углубляться в программирование, то знать это вам необязательно. Теперь, расскажу немного про каждый из типов, отмеченных <code>*</code>.
-          <br><strong>String</strong><br>Строки очень часто используются при программировании. Допустим, вам нужно добавить в ваше приложение инструкцию для пользователя, тогда вам необходимо будет создать переменную, содержащую текст инструкции.
-          Или, допустим, вы хотите узнавать у пользователя его логин и пароль, а затем проверять наличие аккаунта в вашем сервисе. Строки - один из самых часто используемых типов данных, наравне с целыми числами.
-          <br>Обратите внимание, в примере была показана строка "123", но чем же она отличается от типа Integer с таким же значением? Всё просто: <code>123 + 123 = 246</code>, но <code>'123' + '123' = '123123'</code>.
-          <br><br><br><strong>Integer</strong>
-          <br>Тип Integer используется достаточно часто. Вам стоит запомнить некоторые нюансы:
-          <br><strong>1.</strong> При использовании функции <code>age = input()</code> для получения данных о возрасте пользователя, в переменную <code>age</code> записывается <strong>строка</strong>.
-          Для того чтобы в дальнейшем коде мы могли использовать это число, например для расчёта лет до совершеннолетия, нам нужно перевести эту строку в тип данных Integer, для этого используется функция <code>int()</code>.
-          Обратите внимание, чтобы переменная <code>age</code> изменила свое значение на целочисленное, необходимо перезаписать ее следующим образом: <code>age = int(age)</code>. Если мы попытаемся перевести строку '1' в тип int, то всё у нас получится удачно. Однако, что если
-          передать такой аргумент функции: <code>int('hello')</code>? Мы получим исключение (ошибку) ValueError. Если же вы хотите Integer перевести в String, то никакие исключения вам не угрожаю,
-          используйте функцию <code>str()</code>
-          <br><br><br><strong>Boolean</strong>
-          <br>С логическим типом данных вы будете тесно работать, когда дойдете до темы "Условия" или "Циклы". Однако, это тоже достаточно распространенный тип данных, часто используемый в конфигурации приложений.
-          <br><strong>Особенности:</strong>
-          <br><code>1 == True</code> (1 - int)
-          <br><code>1.0 == True</code> (1.0 - float)
-          <br><code>0 == False</code>
-          <br><br><br><strong>Float</strong>
-          <br><strong>Особенности:</strong>
-          <br>При использовании функции int() на float значение, вы увидите следующий результат:
-          <br><code>a = 3.7</code>
-          <br><code>print(int(a))</code>
-          <br><code><strong>>> </strong>3</code>
-          <br><br><br><strong>List</strong>
-          <br>Списки могут хранить в себе множество значений различных типов данных, в том числе, и другие списки.
-          Данные хранятся в одном порядке, а это значит, что вытаскивать их можно по номеру.
-          <br><strong>ЗАПОМНИТЕ!</strong><br>В программировании счёт начинается с 0!
-          <br>Пример:
-          <br>
-          <code>a = [1,2,3,4,5]</code>   # список содержит в себе цифры от 1 до 5
-          <br>
-          <code>print(a[0])</code>
-          <br>
-          <code>>> 1</code>
-          <br>
-          <code>print(a[1])</code>
-          <br>
-          <code>>> 2</code>
-          <br>
-          <code>print(a[-1])</code>  # выводит последнее значение
-          <br>
-          <code>>> 5</code>
-      </div>
-    </div>
-  </div>
+  {% endfor %}
 </div>
-    <!-- =====================================================================
-    -->
-    <!-- =====================================================================
-    -->
-    <!-- =====================================================================
-    -->
-<h1 class="display-6 text-start" style="padding-top: 80px">Операторы, функции ввода и вывода</h1>
-<div class="accordion" id="about-operators">
-  <div class="accordion-item bg-dark text-white">
-    <h2 class="accordion-header" id="headingOne-operators">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne-operators" aria-expanded="true" aria-controls="collapseOne-operators">
-        Операторы
-      </button>
-    </h2>
-    <div id="collapseOne-operators" class="accordion-collapse collapse" aria-labelledby="headingOne-operators" data-bs-parent="#about-operators">
-      <div class="accordion-body">
-          <strong>Для целых чисел:</strong><br>
-        <strong>Сложение:</strong><br>
-          <code>print(1 + 2)</code>
-          <br><code>>> 3</code><br>
-          <strong>Вычитание:</strong><br>
-          <code>print(3 - 1)</code>
-          <br><code>>> 2</code><br>
-          <strong>Умножение:</strong><br>
-          <code>print(1 * 2)</code>
-          <br><code>>> 2</code><br>
-          <strong>Деление:</strong><br>
-          <code>print(5 / 2)</code>
-          <br><code>>> 2.5</code> обратите внимание, тип данных в результате - float<br>
-          <strong>Деление с отбрасыванием остатка:</strong><br>
-          <code>print(5 // 2)</code>
-          <br><code>>> 2</code> в данном случае, тип данных в результате - int<br>
-          <strong>Получение остатка от деления:</strong><br>
-          <code>print(5 % 2)</code>
-          <br><code>>> 1</code><br>
-          <strong>Равно:</strong><br>
-          <code>print(2 == 2)</code>
-          <br><code>>> True</code>  # возвращает True / False <br>
-          <strong>Не равно:</strong><br>
-          <code>print(2 != 2)</code>
-          <br><code>>> False</code><br><br><br>
-          <strong>Для строк:</strong><br>
-          <strong>Сложение (конкатенация):</strong><br>
-          <code>print('Hello ' + 'world' + '!')</code>
-          <br><code>>> 'Hello world!'</code><br><br>
-          <strong>Для строки и целого числа:</strong><br>
-          <code>print(3*'Hello')</code>
-          <br><code>>> 'HelloHelloHello'</code><br><br>
-          <strong>При попытке сложить строку с целым числом конкатенация не произойдет, вы можете использовать:</strong>
-          <br>1 вариант: <br><code>print('Игрок номер: ' + str(1))</code><br>
-          <code>>> Игрок номер 1 </code>
-          <br><br>2 вариант:<br> <code>number = 1</code><br>
-          <code>text = f'Игрок номер: {number}'</code><br>
-          <code>print(text)</code><br>
-          <code>>> 'Игрок номер: 1'</code><br>
-          Перед кавычками используется буква f, что означает "formatted-string". Переменная встраивается прямо в строку в фигурных скобках. Данный способ работает быстрее других способов форматирования, а также очень удобен для чтения.
-        <br><br>3 вариант:<br> <code>number = 1</code><br>
-          <code>text = 'Игрок номер: {}'.format(number)</code><br>
-          <code>print(text)</code><br>
-          <code>>> 'Игрок номер: 1'</code><br>
-          Данный способ в некоторых случаях выигрывает по читаемости. Актуален при встраивании множества значений в длинные строки. Пример из кода для работы с базой данных из реального проекта:<br>
-          <code>sql = """ <br>
-                INSERT INTO public.photostorage_screenshot (screen_date, screen_time, file_path, made_by_device_id) VALUES ('{0}', '{1}', '{2}', '{3}')
-                """.format(<br>
-                    str(object_to_db.get_screenDate()),<br>
-                    str(object_to_db.get_screenTime()),<br>
-                    str(object_to_db.get_screenPath()),<br>
-                    str(object_to_db.get_device_id())<br>
-                )<br>
-                cursor.execute(sql)</code><br>
-          Уточнение: цифры внутри фигурных скобок в данном случае использовались для удобства. Однако, возможно такое использование:<br>
-          <code>print('Мое имя: {0}. Всем привет, меня зовут {0}! Я из {1}.'.format('Евгений', 'Лицея 2'))<br>
-          >> 'Мое имя: Евгений. Всем привет, меня зовут Евгений! Я из Лицея 2.'
-          </code>
-      </div>
-    </div>
-  </div>
-  <div class="accordion-item">
-    <h2 class="accordion-header" id="headingTwo-operators">
-      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo-operators" aria-expanded="false" aria-controls="collapseTwo-operators">
-        Ввод и вывод данных
-      </button>
-    </h2>
-    <div id="collapseTwo-operators" class="accordion-collapse collapse bg-dark text-white" aria-labelledby="headingTwo-operators" data-bs-parent="#about-operators">
-      <div class="accordion-body">
-        Для ввода данных используется функция input(). Данные сохраняются в формате строки. Программа останавливается до тех пор, пока пользователь не введет что-либо.
-          <br>Для того, чтобы введенные данные сохранились, их сразу нужно внести в переменную. При пропуске поля (нажатие enter без ввода данных) переменная получит значение '' (пустота)
-          <br>Если вы хотите, чтобы переменная получала целочисленное значение с пользовательского ввода, то вы можете обернуть функцию другой функцией<br>
-          <code>number = int(input())</code>
-            <br><br><br>
-          <strong>Вывод данных</strong><br>
-          Вывод данных - неотъемлемая часть программы. Пользователь вводит свои данные, а затем получает что-либо на вывод. Для того чтобы вывести сообщение пользователю в Python достаточно воспользоваться функцией <code>print()</code>
-            <br>Функция может принимать как аргумент любое количество строк через запятую:<br>
-          <code>print('Hello', 'world')<br>
-          >> Hello world</code>
-          <br>Однако, вам может потребоваться заменить пробел на какой-либо другой символ, тогда вы можете добавить аргумент <code>sep</code> - сепаратор.
-          <br>
-          <code>
-              print('Hello', 'world', sep='//')<br>
-              >> Hello//world
-          </code><br>
-          В некоторых случаях это может вам пригодиться.
-      </div>
-    </div>
-  </div>
-</div>
-
+{% endfor %}
 </div>
 {% endblock %}

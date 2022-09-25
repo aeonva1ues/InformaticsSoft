@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}
-<title>Compiler</title>
+<title>PyTPretator</title>
 {% endblock %}
 {% block content %}
 <div class="container" style="padding: 60px">
 <div class="d-flex align-items-center visually-hidden" id="loading-label">
-  <strong>Проверка кода...</strong>
-  <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+  <strong style="color: white">Проверка кода...</strong>
+  <div class="spinner-border text-light ms-auto" role="status" aria-hidden="true"></div>
 </div>
 {% if with_error %}
 <div class="alert alert-danger" role="alert">
@@ -30,7 +30,7 @@
 {% csrf_token %}
 <div class="mb-3">
     <label for="code-editor" class="form-label fs-1 text-white">CODE EDITOR</label>
-    <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap;" id="code-editor" rows="16" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
+    <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap; font-family: 'Courier New', Courier, monospace; font-size: 14px" id="code-editor" rows="16" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
   onkeypress=if(event.keyCode==9)return!1></textarea>
 </div>
 <div class="d-grid" style="padding-bottom: 12px">
@@ -60,20 +60,20 @@
 </form>
     <!-- Кнопка-триггер модального окна -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Что такое компилятор?
+  Что такое интерпретатор?
 </button>
 <!-- Модальное окно -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Что такое компилятор?</h5>
+        <h5 class="modal-title" id="staticBackdropLabel">Что такое интерпретатор?</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
       </div>
       <div class="modal-body text-black">
     <p>
     <h5>
-        Компилятор - инструмент, превращающий код, написанный на понятном человеку языке программирования, в код, понятный машине.
+        Интерпретатор - это компьютерная программа, которая преобразует каждый программный оператор высокого уровня в машинный код.
     </h5>
     <br>
     <h5>Прежде чем приступать к написанию кода, предлагаю ознакомиться с вкладками: Справочник, Примеры.</h5>
@@ -87,7 +87,7 @@
   </div>
 </div>
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop2">
-  Ограничения данного компилятора
+  Ограничения данного редактора
 </button>
 <!-- Модальное окно -->
 <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel2" aria-hidden="true">
@@ -99,7 +99,7 @@
       </div>
       <div class="modal-body text-black">
     <p>
-    <h5>Данный компилятор создан для практики базовых знаний о языке программирования. В связи с этим вы можете использовать лишь несколько стандартных Python-библиотек: Math, Random, Datetime.</h5>
+    <h5>Данный редактор создан для практики базовых знаний о языке программирования. В связи с этим вы можете использовать лишь несколько стандартных Python-библиотек: Math, Random, Datetime.</h5>
         <br>
         <h5>Однако для практики подобных модулей будет достаточно. Разберитесь сначала с ними.</h5>
         <br>
@@ -112,7 +112,7 @@
         <h3 style="color:#c00937">Цикл While</h3>
         <h5 class="text-decoration-line-through">Временно недоступен.</h5>
         <br>
-        <h5>Цикл while доступен для вашего использования в данном компиляторе. Ограничение накладывается лишь на использование бесконечного цикла.
+        <h5>Цикл while доступен для вашего использования в данном редакторе. Ограничение накладывается лишь на использование бесконечного цикла.
         </h5>
         </p>
       </div>
@@ -131,7 +131,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel3">Особенности данного компилятора</h5>
+        <h5 class="modal-title" id="staticBackdropLabel3">Особенности данного редактора</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
       </div>
       <div class="modal-body text-black">
