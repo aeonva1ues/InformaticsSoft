@@ -1,5 +1,6 @@
 import sys
 import io
+import os
 
 import queue
 import threading
@@ -8,6 +9,7 @@ import time
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
+from django.conf import settings
 from django.views.generic import CreateView
 
 from .forms import CheckCode, TypeUserInput
@@ -50,6 +52,7 @@ def run_code(__code):
         __with_error = True
         result = code_error
     finally:
+        sys.stdout.close()
         __codeOut.close()
         return (result, __with_error)
 
@@ -112,13 +115,13 @@ def py_compiler_view(request):
                         result = thr_return[0]
                         with_error = thr_return[1]
                         thr.stop()
-                        sys.stdout = ''   # очистка ввода
+                        # sys.stdout = ''   # очистка ввода
                         break
                     if t == 2:
                         result = 'RuntimeError: Длительность выполнения программы превышает лимит, возможно используется бесконечный цикл'
                         with_error = True
                         thr.stop()
-                        sys.stdout = ''   # очистка ввода
+                        # sys.stdout = ''   # очистка ввода
                         break
                     time.sleep(0.25)
             else:
@@ -240,7 +243,7 @@ def user_inputs(request):
                 code[line_index] = f'{tabs}{variable} = {value} # введено пользователем через input()'
             counter += 1
         request.session['new_code'] = code
-        return HttpResponseRedirect('/compiler/')
+        return HttpResponseRedirect('/code-editor/')
 
     input_fields = request.session['inputs_lines']  # {'code_line', 'line_index'}
     fields_data = []
@@ -277,7 +280,7 @@ def user_inputs(request):
         context = {'input_fields': fields_data}
         return render(request, 'py_compiler/input_fields.html', context)
     else:
-        return HttpResponseRedirect('/compiler/')
+        return HttpResponseRedirect('/code-editor/')
 
 
 def contacts_page(request):
@@ -285,4 +288,62 @@ def contacts_page(request):
 
 
 def manual_page(request):
-    return render(request, 'py_compiler/manual.html')
+    context = {}
+    manual_folder_path = f'{settings.BASE_DIR}/media/txt_content/manual' 
+
+    media_folder_files = os.listdir(manual_folder_path)
+    
+    themes = []
+
+    for file_name in media_folder_files:
+        file_name_args = file_name.split('-')
+        if len(file_name_args) == 3:
+            section = file_name_args[0]
+            with open(f'{manual_folder_path}/{file_name}', 'r', encoding='utf-8') as txt_file:
+                content = txt_file.read()
+            content_parts = content.split('============')  # 0 - заголовок, 1 - тело
+            header = content_parts[0].strip()
+            body = content_parts[1].strip()
+            themes.append(
+                {
+                    'section': section,
+                    'header': header,
+                    'body': body
+                }
+            )
+
+    theme_and_section = []
+    counter = 0
+    for theme in themes:
+        section_id = theme['section']
+        if len(theme_and_section) > 0:
+            founded = False
+            for obj in theme_and_section:
+                if obj['section_id'] == section_id:
+                    obj['content_list'] = obj['content_list'] + [{'id': counter, 'header': theme['header'], 'body': theme['body']}]
+                    founded = True
+                    break
+            if not founded:
+                theme_and_section.append(
+                {'section_id': section_id, 
+                'content_list': [
+                    {
+                        'id': counter,
+                        'header': theme['header'], 
+                        'body': theme['body']
+                    }]
+                })
+        else:
+            theme_and_section.append(
+                {'section_id': section_id, 
+                'content_list': [
+                    {
+                        'id': counter,
+                        'header': theme['header'], 
+                        'body': theme['body']
+                    }]
+                })
+        counter += 1
+    # print(theme_and_section[1]['content_list'][0])
+    context['themes_and_sections'] = theme_and_section
+    return render(request, 'py_compiler/manual.html', context)
