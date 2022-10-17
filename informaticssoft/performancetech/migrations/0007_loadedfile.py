@@ -13,7 +13,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LoadedFile',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('file_name', models.CharField(max_length=122)),
                 ('file_type', models.CharField(max_length=122)),
                 ('section_name', models.CharField(max_length=122)),
