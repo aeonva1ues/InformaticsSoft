@@ -577,7 +577,7 @@ def all_notes_view(request):
             date_now = str(datetime.now()).split()[0]
             time_now = str(datetime.now()).split()[1].split('.')[0]
             note_text = request.POST.get('notesInput')
-            note_name = request.POST.get('nameInput')    
+            note_name = request.POST.get('nameInput')
             new_note = UserNote(
                 note_name=note_name,
                 note_text=note_text,
