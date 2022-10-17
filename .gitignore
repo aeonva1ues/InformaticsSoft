@@ -2,4 +2,5 @@
 /informaticssoft/media/
 .idea/
 *.sqlite3
+*.env
 **/__pycache__/

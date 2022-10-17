@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import py_compiler_view, user_inputs, contacts_page, manual_page
 
+from .views import contacts_page, manual_page, py_compiler_view, user_inputs
 
 urlpatterns = [
     path('code-editor/', py_compiler_view),

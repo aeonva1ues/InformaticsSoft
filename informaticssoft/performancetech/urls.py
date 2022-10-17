@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import performancetech_main_view, performancetech_load_view, getFileInfoPost, \
-    deleteFilePost, chooseFilePost, selectedFilesPost, login_view, logout_view, create_performance_view, \
-        show_presentation_view, deletePresentationPost, cancelSelectingFilesPost, history_view, \
-            all_notes_view, notes_page_view
 
+from .views import (all_notes_view, cancelSelectingFilesPost, chooseFilePost,
+                    create_performance_view, deleteFilePost,
+                    deletePresentationPost, getFileInfoPost, history_view,
+                    login_view, logout_view, notes_page_view,
+                    performancetech_load_view, performancetech_main_view,
+                    selectedFilesPost, show_presentation_view)
 
 urlpatterns = [
     path('performancetech/', performancetech_main_view),
@@ -13,12 +15,26 @@ urlpatterns = [
     path('performancetech/file-info', getFileInfoPost, name='file-info'),
     path('performancetech/delete-file', deleteFilePost, name='delete-file'),
     path('performancetech/choose-file', chooseFilePost, name='choose-file'),
-    path('performancetech/cancel-selecting-files', cancelSelectingFilesPost, name='cancel-selecting'),
-    path('performancetech/selected-files', selectedFilesPost, name='selected-files'),
+    path(
+        'performancetech/cancel-selecting-files',
+        cancelSelectingFilesPost,
+        name='cancel-selecting'
+        ),
+    path(
+        'performancetech/selected-files',
+        selectedFilesPost,
+        name='selected-files'),
     path('performancetech/create-performance', create_performance_view),
     path('performancetech/<id>/show', show_presentation_view),
-    path('performancetech/delete-presentation', deletePresentationPost, name='delete-presentation'),
+    path(
+        'performancetech/delete-presentation',
+        deletePresentationPost,
+        name='delete-presentation'
+        ),
     path('performancetech/history', history_view, name='history'),
     path('performancetech/notes', all_notes_view, name='notes'),
-    path('performancetech/notes/<notes_id>', notes_page_view, name='notes_page'),
+    path(
+        'performancetech/notes/<notes_id>',
+        notes_page_view, name='notes_page'
+        ),
 ]

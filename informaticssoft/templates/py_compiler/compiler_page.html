@@ -9,14 +9,14 @@
   <div class="spinner-border text-light ms-auto" role="status" aria-hidden="true"></div>
 </div>
 {% if with_error %}
-<div class="alert alert-danger" role="alert">
+<div class="alert alert-danger" role="alert" style="overflow-x: scroll">
   <p>
     Ошибка: <br>
     {{ code_result}}
   </p>
 </div>
 {% elif with_error == False %}
-<div class="alert alert-success" role="alert">
+<div class="alert alert-success" role="alert" style="overflow-x: scroll">
   <p>
     Результат работы кода: <br> 
     {% for code_line in code_result %}
