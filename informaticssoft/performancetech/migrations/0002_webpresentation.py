@@ -13,7 +13,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='WebPresentation',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
                 ('name', models.CharField(max_length=50)),
                 ('creation_date', models.DateField()),
                 ('is_active', models.BooleanField(default=True)),

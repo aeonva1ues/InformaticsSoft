@@ -13,8 +13,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserNote',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('note_name', models.CharField(blank=True, max_length=50, null=True)),
+                ('id', models.BigAutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID')),
+                ('note_name', models.CharField(
+                    blank=True,
+                    max_length=50,
+                    null=True)),
                 ('note_text', models.TextField(default=None)),
                 ('creation_date', models.DateField()),
                 ('creation_time', models.TimeField()),
