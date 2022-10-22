@@ -294,45 +294,51 @@ def user_inputs(request):
                     ' # введено пользователем через input()'
                 )
             counter += 1
+        request.session.pop('inputs_lines')
         request.session['new_code'] = code
         return HttpResponseRedirect('/code-editor/')
 
-    input_fields = request.session['inputs_lines']
-    fields_data = []
-    if len(input_fields) > 0:
-        for input_field in input_fields:
-            code_line = input_field['code_line']
-            input_field_data = code_line.split('=')
+    if 'inputs_lines' in request.session:
+        input_fields = request.session['inputs_lines']
+        fields_data = []
+        if len(input_fields) > 0:
+            for input_field in input_fields:
+                code_line = input_field['code_line']
+                input_field_data = code_line.split('=')
 
-            if len(input_field_data) == 1:
-                variable = 'input()'
-                index = 0
-            else:
-                variable = input_field_data[0].strip()
-                index = 1
-            part_with_func = input_field_data[index].strip()
-            flag = False  # True если цикл вошел в комментарий в input( X X )
-            comment_text = ''
-            part_with_input = part_with_func.split('input(')[1].split(')')[0]
-            for letter in part_with_input:
-                if letter == '"' or letter == "'":
-                    if flag:
-                        # Попалась вторая кавычка
-                        break
-                    flag = True
-                elif flag:
-                    comment_text = comment_text + letter
-            fields_data.append(
-                {
-                    'variable': variable,
-                    'index': input_field['line_index'],
-                    'comment': comment_text
-                }
-            )
-        context = {'input_fields': fields_data}
-        return render(request, 'py_compiler/input_fields.html', context)
+                if len(input_field_data) == 1:
+                    variable = 'input()'
+                    index = 0
+                else:
+                    variable = input_field_data[0].strip()
+                    index = 1
+                part_with_func = input_field_data[index].strip()
+                # True если цикл вошел в комментарий в input( X X )
+                flag = False
+                comment_text = ''
+                part_with_input = part_with_func.split('input(')[1]\
+                                                .split(')')[0]
+                for letter in part_with_input:
+                    if letter == '"' or letter == "'":
+                        if flag:
+                            # Попалась вторая кавычка
+                            break
+                        flag = True
+                    elif flag:
+                        comment_text = comment_text + letter
+                fields_data.append(
+                    {
+                        'variable': variable,
+                        'index': input_field['line_index'],
+                        'comment': comment_text
+                    }
+                )
+            context = {'input_fields': fields_data}
+            return render(request, 'py_compiler/input_fields.html', context)
+        else:
+            return HttpResponseRedirect('/code-editor/', status=301)
     else:
-        return HttpResponseRedirect('/code-editor/')
+        return HttpResponseRedirect('/code-editor/', status=301)
 
 
 def contacts_page(request):
