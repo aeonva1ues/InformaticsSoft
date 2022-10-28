@@ -316,7 +316,6 @@ def deleteFilePost(request):
                     break
                 index += 1
 
-    print(f'Файл({file_id}) удален: {file_path}')
     file_in_db.delete()  # удаление записи файла из бд
     os.remove(file_path)
     return JsonResponse({'status': 'done'}, status=200)
