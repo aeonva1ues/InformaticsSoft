@@ -5,29 +5,21 @@
 {% block content %}
 <div class="container" style="color: white">
 <h1 class="display-3" style="padding: 80px">Справочные материалы<br>Python</h1>
-{% for theme_and_section in themes_and_sections %}
+{% for section in sections %}
 <h1 class="display-6 text-start">
-  {% if theme_and_section.section_id == '1' %}
-  Переменные и типы данных
-  {% elif theme_and_section.section_id == '2' %}
-  Операторы, функции ввода и вывода
-  {% elif theme_and_section.section_id == '3' %}
-  Условия
-  {% elif theme_and_section.section_id == '4' %}
-  Циклы
-  {% endif %}
+  {{ section.section_name }}
 </h1>
 <div class="accordion" id="about-vars" style="padding-bottom: 30px">
-  {% for themes_in_section in theme_and_section.content_list %}
+  {% for info_block in section.info_blocks %}
   <div class="accordion-item bg-dark text-white">
-    <h2 class="accordion-header" id="heading-{{ themes_in_section.id }}">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ themes_in_section.id }}" aria-expanded="true" aria-controls="collapse-{{ themes_in_section.id }}">
-          {{ themes_in_section.header }}
+    <h2 class="accordion-header" id="heading-{{ info_block.id }}">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ info_block.id }}" aria-expanded="true" aria-controls="collapse-{{ info_block.id }}">
+          {{ info_block.block_name }}
       </button>
     </h2>
-    <div id="collapse-{{ themes_in_section.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ themes_in_section.id }}" data-bs-parent="#about-{{ themes_in_section.id }}">
+    <div id="collapse-{{ info_block.id }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ info_block.id }}" data-bs-parent="#about-{{ info_block.id }}">
       <div class="accordion-body">
-        {{ themes_in_section.body|safe }}
+        {{ info_block.text|safe }}
       </div>
     </div>
   </div>

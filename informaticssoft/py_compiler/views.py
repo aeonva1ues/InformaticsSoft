@@ -1,13 +1,12 @@
 import io
-import os
 import queue
 import sys
 import threading
 import time
 
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from py_compiler.models import Manual_Section
 
 from .forms import CheckCode, TypeUserInput
 
@@ -347,72 +346,15 @@ def contacts_page(request):
 
 def manual_page(request):
     context = {}
-    manual_folder_path = f'{settings.BASE_DIR}/media/txt_content/manual'
-
-    media_folder_files = os.listdir(manual_folder_path)
-    themes = []
-
-    for file_name in media_folder_files:
-        file_name_args = file_name.split('-')
-        if len(file_name_args) == 3:
-            section = file_name_args[0]
-            with open(
-                f'{manual_folder_path}/{file_name}',
-                'r',
-                encoding='utf-8') \
-                    as txt_file:
-                content = txt_file.read()
-            # 0 - заголовок, 1 - тело
-            content_parts = content.split('============')
-            header = content_parts[0].strip()
-            body = content_parts[1].strip()
-            themes.append(
-                {
-                    'section': section,
-                    'header': header,
-                    'body': body
-                }
-            )
-
-    theme_and_section = []
-    counter = 0
-    for theme in themes:
-        section_id = theme['section']
-        if len(theme_and_section) > 0:
-            founded = False
-            for obj in theme_and_section:
-                if obj['section_id'] == section_id:
-                    obj['content_list'] = obj['content_list'] + [
-                        {
-                            'id': counter,
-                            'header': theme['header'],
-                            'body': theme['body']
-                        }
-                    ]
-                    founded = True
-                    break
-            if not founded:
-                theme_and_section.append({
-                    'section_id': section_id,
-                    'content_list': [
-                        {
-                            'id': counter,
-                            'header': theme['header'],
-                            'body': theme['body']
-                        }]
-                })
-        else:
-            theme_and_section.append(
-                {
-                    'section_id': section_id,
-                    'content_list': [
-                        {
-                            'id': counter,
-                            'header': theme['header'],
-                            'body': theme['body']
-                        }]
-                })
-        counter += 1
-    # print(theme_and_section[1]['content_list'][0])
-    context['themes_and_sections'] = theme_and_section
+    sections = Manual_Section.objects.all()
+    context_sections = []
+    for section in sections:
+        info_blocks = section.infoblock.all()
+        context_sections.append(
+            {
+                'section_name': section.name,
+                'info_blocks': info_blocks
+            }
+        )
+    context['sections'] = context_sections
     return render(request, 'py_compiler/manual.html', context)
