@@ -349,12 +349,13 @@ def manual_page(request):
     sections = Manual_Section.objects.all()
     context_sections = []
     for section in sections:
-        info_blocks = section.infoblock.all()
-        context_sections.append(
-            {
-                'section_name': section.name,
-                'info_blocks': info_blocks
-            }
-        )
+        if section.is_published:
+            info_blocks = section.infoblock.all()
+            context_sections.append(
+                {
+                    'section_name': section.name,
+                    'info_blocks': info_blocks
+                }
+            )
     context['sections'] = context_sections
     return render(request, 'py_compiler/manual.html', context)
