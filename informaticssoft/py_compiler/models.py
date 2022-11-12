@@ -24,6 +24,9 @@ class Manual_Infoblock(models.Model):
     text = models.TextField('материал по теме')
     is_published = models.BooleanField('опубликовано', default=True)
 
+    def __str__(self):
+        return f'{self.block_name} из раздела {self.section}'
+
     class Meta:
         verbose_name = 'статья'
         verbose_name_plural = 'статьи'
