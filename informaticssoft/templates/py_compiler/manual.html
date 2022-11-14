@@ -5,13 +5,13 @@
 {% block content %}
 <div class="container" style="color: white">
 <h1 class="display-3" style="padding: 80px">Справочные материалы<br>Python</h1>
-{% for section in sections %}
+{% for info_block in info_blocks %}
+{% ifchanged info_block.section.name %}
 <h1 class="display-6 text-start">
-  {{ section.section_name }}
+    {{ info_block.section.name }}
 </h1>
-<div class="accordion" id="about-vars" style="padding-bottom: 30px">
-  {% for info_block in section.info_blocks %}
-  {% if info_block.is_published %}
+<div class="accordion" style="padding-bottom: 30px">
+{% endifchanged %}
   <div class="accordion-item bg-dark text-white">
     <h2 class="accordion-header" id="heading-{{ info_block.id }}">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ info_block.id }}" aria-expanded="true" aria-controls="collapse-{{ info_block.id }}">
@@ -24,9 +24,11 @@
       </div>
     </div>
   </div>
-  {% endif %}
-  {% endfor %}
-</div>
+{% ifchanged info_blocks.forloop.counter1.section.name %}
+{% if not forloop.first %}
+  </div>
+{% endif %}
+{% endifchanged %}
 {% endfor %}
 </div>
 {% endblock %}

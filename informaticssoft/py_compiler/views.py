@@ -6,7 +6,7 @@ import time
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from py_compiler.models import Manual_Section
+from py_compiler.models import Manual_Infoblock
 
 from .forms import CheckCode, TypeUserInput
 
@@ -346,16 +346,20 @@ def contacts_page(request):
 
 def manual_page(request):
     context = {}
-    sections = Manual_Section.objects.all()
-    context_sections = []
-    for section in sections:
-        if section.is_published:
-            info_blocks = section.infoblock.all()
-            context_sections.append(
-                {
-                    'section_name': section.name,
-                    'info_blocks': info_blocks
-                }
-            )
-    context['sections'] = context_sections
+    qs = (
+        Manual_Infoblock.objects
+        .filter(is_published=True)
+        .select_related('section')
+        .filter(section__is_published=True)
+        .only(
+            'id',
+            'block_name',
+            'text',
+            'section__name'
+        )
+    )
+    context['info_blocks'] = qs
+    print(qs[0].section.name)
+    print(qs[1].section.name)
+    print(qs[2].section.name)
     return render(request, 'py_compiler/manual.html', context)
