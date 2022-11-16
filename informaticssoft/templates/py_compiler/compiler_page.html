@@ -30,7 +30,7 @@
 {% csrf_token %}
 <div class="mb-3">
     <label for="code-editor" class="form-label fs-1 text-white">CODE EDITOR</label>
-    <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap; font-family: 'Courier New', Courier, monospace; font-size: 14px" id="code-editor" rows="16" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
+    <textarea name="code_editor" class="form-control bg-black text-white fs-3" style="white-space: nowrap; font-family: 'Courier New', Courier, monospace; font-size: 14px" id="code-editor" rows="6" onkeydown=if(event.keyCode==9){this.value+=String.fromCharCode(9);return!1}
   onkeypress=if(event.keyCode==9)return!1></textarea>
 </div>
 <div class="d-grid" style="padding-bottom: 12px">
