@@ -4,9 +4,9 @@ import sys
 import threading
 import time
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
-from py_compiler.models import Manual_Infoblock
+from py_compiler.models import Manual_Infoblock, VideoExample
 
 from .forms import CheckCode, TypeUserInput
 
@@ -359,7 +359,20 @@ def manual_page(request):
         )
     )
     context['info_blocks'] = qs
-    print(qs[0].section.name)
-    print(qs[1].section.name)
-    print(qs[2].section.name)
     return render(request, 'py_compiler/manual.html', context)
+
+
+def examples_page(request):
+    videos = (
+        VideoExample.objects
+        .published()
+        .only('lesson__block_name', 'link')
+    )
+    context = {'videos': videos}
+    return render(request, 'py_compiler/examples.html', context)
+
+
+def get_video(request):
+    lesson = request.POST.get('lesson')
+    
+    return JsonResponse({'action': 'select'}, status=200)
