@@ -10,9 +10,7 @@ class StaticUrlTests(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            'Главная страница редактора выдает код: {}'.format(
-                response.status_code
-            )
+            f'Главная страница редактора выдает код: {response.status_code}'
         )
 
     def test_code_input_page(self):
@@ -34,9 +32,7 @@ class StaticUrlTests(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            'Страница с вводом данных вернула код: {}'.format(
-                response.status_code
-            )
+            f'Страница с вводом данных вернула код: {response.status_code}'
         )
 
     def test_manual_page(self):
@@ -44,9 +40,7 @@ class StaticUrlTests(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            'Страница с мануалом не открылась. Код: {}'.format(
-                response.status_code
-                )
+            f'Страница с мануалом не открылась. Код: {response.status_code}'
         )
 
     def test_contacts_page(self):
@@ -54,7 +48,16 @@ class StaticUrlTests(TestCase):
         self.assertEqual(
             response.status_code,
             200,
-            'Страница для обратной связи не открылась. Код: {}'.format(
-                response.status_code
+            (
+                'Страница для обратной связи не открылась.'
+                f' Код: {response.status_code}'
             )
+        )
+
+    def test_example_page(self):
+        response = self.client.get('/examples/')
+        self.assertEqual(
+            response.status_code,
+            200,
+            f'Страница с примерами не открылась. Код: {response.status_code}'
         )
