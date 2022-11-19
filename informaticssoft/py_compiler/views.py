@@ -9,8 +9,6 @@ from django.shortcuts import render
 from django.db.models import Q
 from py_compiler.models import Manual_Infoblock, VideoExample
 
-from django.db.models.functions import Lower
-
 from .forms import CheckCode, TypeUserInput
 
 
@@ -385,7 +383,6 @@ def examples_page(request):
                 ) | Q(
                     lesson__section__name__icontains=lesson.lower()
                 )
-
             )
             .filter(
                 is_published=True,
