@@ -8,46 +8,31 @@
     <iframe width="560" height="315" src="https://www.youtube.com/embed/6W5HamaARk8?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
     <h3 style="padding-top: 60px">Поиск видеоразбора</h3>
-    <div class="row g-0">
-        <div class="col-11">
-            <input class="form-control" list="getLessonlistOptions" id="get-lesson" placeholder="Введите тему для поиска...">
+    <form method="post">
+        {% csrf_token %}
+        <div class="row g-0">
+            <div class="col-11">
+                <input class="form-control" list="getLessonlistOptions" name="lesson_name" placeholder="Введите тему для поиска...">
+            </div>
+            <div class="col-1" style="transform: translate(-10px,0)">
+                <button id="find-lesson-btn" type="submit" class="btn btn-success" style="border-radius:0">Найти</button>
+            </div>
         </div>
-        <div class="col-1" style="transform: translate(-10px,0)">
-            <button id="find-lesson-btn" type="button" class="btn btn-success" style="border-radius:0">Найти</button>
-        </div>
-    </div>
-    <datalist id="getLessonlistOptions">
-    {% for video in videos %}
-        {% ifchanged video.lesson.block_name %}
-        <option value="{{ video.lesson.block_name }}">
+        <datalist id="getLessonlistOptions">
+        {% for video in videos %}
+            {% ifchanged video.lesson.block_name %}
+            <option value="{{ video.lesson.block_name }}">
+            {% endifchanged %}
+        {% endfor %}
+        </datalist>
+    </form>
+    <ul style="padding-top: 60px">
+        {% for video in videos %}
+        {% ifchanged video.lesson.section.name %}
+        <h3>{{ video.lesson.section.name }}</h3>
         {% endifchanged %}
-    {% endfor %}
-    </datalist>
-{% csrf_token %}
+        <li><a href="{{ video.link }}" target="_blank">{{ video.lesson.block_name }}</a></li>
+        {% endfor %}
+    </ul>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    'use strict';
-    const lesson_name_field = document.getElementById('get-lesson');
-    const search_btn = document.getElementById('find-lesson-btn');
-    search_btn.onclick = function() {
-        $.ajax({
-            url: "{% url 'pytpr:get-video' %}",
-            type: 'post',
-            data: {
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-                lesson: lesson_name_field.value,
-            },
-            // если успешно, то
-            success: function(response) {
-                console.log('+');
-            },
-            // если ошибка, то
-            error: function() {
-                // предупредим об ошибке
-                console.log('Ошибка ajax запроса');
-            }
-          });
-    };
-</script>
 {% endblock %}

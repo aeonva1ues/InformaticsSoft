@@ -4,9 +4,12 @@ import sys
 import threading
 import time
 
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.db.models import Q
 from py_compiler.models import Manual_Infoblock, VideoExample
+
+from django.db.models.functions import Lower
 
 from .forms import CheckCode, TypeUserInput
 
@@ -350,6 +353,7 @@ def manual_page(request):
         Manual_Infoblock.objects
         .filter(is_published=True)
         .select_related('section')
+        .order_by('section__id')
         .filter(section__is_published=True)
         .only(
             'id',
@@ -357,22 +361,61 @@ def manual_page(request):
             'text',
             'section__name'
         )
+        .order_by('id')
     )
     context['info_blocks'] = qs
     return render(request, 'py_compiler/manual.html', context)
 
 
 def examples_page(request):
-    videos = (
-        VideoExample.objects
-        .published()
-        .only('lesson__block_name', 'link')
-    )
-    context = {'videos': videos}
+    context = {}
+    if request.method == 'POST':
+        lesson = request.POST.get('lesson_name')
+        lessons_from_db = (
+            VideoExample.objects
+            .select_related('lesson')
+            .select_related('lesson__section')
+            .filter(
+                Q(
+                    lesson__block_name__icontains=lesson.title()
+                ) | Q(
+                    lesson__block_name__icontains=lesson.lower()
+                ) | Q(
+                    lesson__section__name__icontains=lesson.title()
+                ) | Q(
+                    lesson__section__name__icontains=lesson.lower()
+                )
+
+            )
+            .filter(
+                is_published=True,
+                lesson__is_published=True,
+                lesson__section__is_published=True
+            )
+            .order_by('lesson__section__name')
+            .only(
+                'lesson__section__name',
+                'lesson__block_name',
+                'link'
+            )
+        )
+        context['videos'] = lessons_from_db
+    else:
+        all_lessons = (
+            VideoExample.objects
+            .select_related('lesson')
+            .select_related('lesson__section')
+            .order_by('lesson__section__name')
+            .only(
+                'lesson__section__name',
+                'lesson__block_name',
+                'link'
+            )
+            .filter(
+                is_published=True,
+                lesson__is_published=True,
+                lesson__section__is_published=True
+            )
+        )
+        context['videos'] = all_lessons
     return render(request, 'py_compiler/examples.html', context)
-
-
-def get_video(request):
-    lesson = request.POST.get('lesson')
-    
-    return JsonResponse({'action': 'select'}, status=200)
