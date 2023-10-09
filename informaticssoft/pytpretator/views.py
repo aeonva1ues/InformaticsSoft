@@ -7,9 +7,9 @@ import time
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.db.models import Q
-from py_compiler.models import Manual_Infoblock, VideoExample
+from pytpretator.models import Manual_Infoblock, VideoExample
 
-from .forms import CheckCode, TypeUserInput
+from pytpretator.forms import CheckCode, TypeUserInput
 
 
 class StoppableThread(threading.Thread):
@@ -61,7 +61,7 @@ def run_code(__code):
         return (result, __with_error)
 
 
-def py_compiler_view(request):
+def py_interpreter_view(request):
     context = {}
     if 'new_code' in request.session:
         new_code = request.session['new_code']
@@ -184,7 +184,7 @@ def py_compiler_view(request):
             context['with_error'] = with_error
             context['code_result'] = result
 
-    return render(request, 'py_compiler/compiler_page.html', context=context)
+    return render(request, 'pytpretator/compiler_page.html', context=context)
 
 
 def user_inputs(request):
@@ -334,7 +334,7 @@ def user_inputs(request):
                     }
                 )
             context = {'input_fields': fields_data}
-            return render(request, 'py_compiler/input_fields.html', context)
+            return render(request, 'pytpretator/input_fields.html', context)
         else:
             return HttpResponseRedirect('/code-editor/', status=301)
     else:
@@ -342,7 +342,7 @@ def user_inputs(request):
 
 
 def contacts_page(request):
-    return render(request, 'py_compiler/contacts.html')
+    return render(request, 'pytpretator/contacts.html')
 
 
 def manual_page(request):
@@ -362,7 +362,7 @@ def manual_page(request):
         .order_by('id')
     )
     context['info_blocks'] = qs
-    return render(request, 'py_compiler/manual.html', context)
+    return render(request, 'pytpretator/manual.html', context)
 
 
 def examples_page(request):
@@ -415,4 +415,4 @@ def examples_page(request):
             )
         )
         context['videos'] = all_lessons
-    return render(request, 'py_compiler/examples.html', context)
+    return render(request, 'pytpretator/examples.html', context)

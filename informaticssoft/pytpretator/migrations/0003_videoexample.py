@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('py_compiler', '0002_auto_20221112_1454'),
+        ('pytpretator', '0002_auto_20221112_1454'),
     ]
 
     operations = [
@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('link', models.URLField(max_length=150, verbose_name='ссылка на видео')),
                 ('is_published', models.BooleanField(default=True, verbose_name='отображать')),
-                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='videoexample', to='py_compiler.manual_infoblock', verbose_name='тема')),
+                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='videoexample', to='pytpretator.manual_infoblock', verbose_name='тема')),
             ],
             options={
                 'verbose_name': 'видеоролик',

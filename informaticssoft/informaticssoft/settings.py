@@ -35,7 +35,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1').split()
 
 INSTALLED_APPS = [
     'mainmenu.apps.MainmenuConfig',
-    'py_compiler.apps.PyCompilerConfig',
+    'pytpretator.apps.PyCompilerConfig',
     'performancetech.apps.PerformancetechConfig',
     'django.contrib.admin',
     'django.contrib.auth',

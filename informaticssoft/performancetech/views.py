@@ -7,9 +7,13 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
-from .forms import CreateNote, CreateWebPresentation, LoginUser, UploadFileForm
-from .models import (DeletedFile, FileInStorage, LoadedFile, Section, UserNote,
-                     WebPresentation)
+from performancetech.forms import (
+    CreateNote, CreateWebPresentation, LoginUser, UploadFileForm
+)
+from performancetech.models import (
+    DeletedFile, FileInStorage, LoadedFile, Section, UserNote,
+    WebPresentation
+)
 
 '''
 Performancetech -

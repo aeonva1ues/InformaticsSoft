@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from py_compiler.models import (
+from pytpretator.models import (
     Manual_Section, Manual_Infoblock,
     VideoExample
     )

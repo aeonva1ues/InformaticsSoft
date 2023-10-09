@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('py_compiler', '0001_initial'),
+        ('pytpretator', '0001_initial'),
     ]
 
     operations = [

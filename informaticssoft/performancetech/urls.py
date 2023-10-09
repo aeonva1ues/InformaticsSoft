@@ -1,11 +1,13 @@
 from django.urls import path
 
-from .views import (all_notes_view, cancelSelectingFilesPost, chooseFilePost,
-                    create_performance_view, deleteFilePost,
-                    deletePresentationPost, getFileInfoPost, history_view,
-                    login_view, logout_view, notes_page_view,
-                    performancetech_load_view, performancetech_main_view,
-                    selectedFilesPost, show_presentation_view)
+from performancetech.views import (
+    all_notes_view, cancelSelectingFilesPost, chooseFilePost,
+    create_performance_view, deleteFilePost,
+    deletePresentationPost, getFileInfoPost, history_view,
+    login_view, logout_view, notes_page_view,
+    performancetech_load_view, performancetech_main_view,
+    selectedFilesPost, show_presentation_view
+)
 
 urlpatterns = [
     path('performancetech/', performancetech_main_view),
